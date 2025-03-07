@@ -1,0 +1,545 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #e9e5e5;
+}
+
+.barra-superior {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #e9e5e5;
+    width: 100%;
+}
+
+.contenedor-logo {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.contenedor-logo .subtitulo {
+    font-size: 16px;
+    font-weight: normal;
+    color: #555;
+}
+
+.contenedor-logo .no-negrilla {
+    font-weight: normal;
+}
+
+.botones-superior1{
+    display: flex;
+    gap: 10px;
+    margin-left: auto; 
+}
+
+.botones-superior1 button {
+    background-color: #cfcdcd;
+    color: rgb(255, 245, 245);
+    font-size: 18px;
+    border: none;
+    padding: 10px 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.botones-superior1 button:hover {
+    background-color: #333;
+}
+
+.botones-superior1 i {
+    font-size: 20px;
+}
+
+.botones-superior1 .separador {
+    display: inline-block;
+    width: 1px;
+    height: 100%; 
+    background-color: #fff;
+    margin: 0 10px;
+}
+
+.botones-superior2{
+    display: flex;
+    gap: 10px;
+    margin-left: auto; 
+}
+
+.botones-superior2 button {
+    background-color: #000;
+    color: rgb(255, 245, 245);
+    font-size: 18px;
+    border: none;
+    padding: 10px 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    justify-content: flex-start; 
+}
+
+.botones-superior2 button:hover {
+    background-color: #333;
+}
+
+.botones-superior2 i {
+    font-size: 20px;
+}
+
+.form-busqueda {
+    display: flex;
+    align-items: center;
+}
+
+.input-con-icono {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-con-icono input[type="search"] {
+    font-size: 18px;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 5px;
+    height: 100%; 
+    box-sizing: border-box;
+}
+
+.input-con-icono i {
+    position: absolute;
+    right: 10px;
+    font-size: 20px;
+    color: #333;
+}
+
+.contenedor-principal {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #fff;
+    border: 2px solid #ddd;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    display: flex;
+    justify-content: start;
+    background: #fffafa;
+    color: white;
+    padding: 15px 20px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    padding-left: 0; 
+}
+
+nav ul li a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+.banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-around; 
+    background: url('banner.jpg') no-repeat center center/cover;
+    height: auto;
+    color: rgb(27, 25, 25);
+    font-size: 24px;
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.cartas-banner {
+    display: flex;
+    flex-direction: column; 
+    width:600px; 
+    height: 400px;
+}
+
+.carta-banner2 {
+    position: relative;
+    display: flex;
+    border: 1px solid black;
+    height: 500px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; 
+    margin-top: 20px; 
+}
+
+.carta-banner {
+    position: relative;
+    display: flex;
+    border: 1px solid black;
+    height: 500px; 
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; 
+    margin-top: 20px; 
+}
+.carta-banner img, .carta-banner2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top; 
+}
+
+.carta-banner h3, .carta-banner2 h3 {
+    position: absolute;
+    color: white;
+    padding: 10px;
+    margin: 0;
+    font-size: 26px;
+    border-radius: 5px;
+    top: 10px;
+    left: 10px;
+}
+
+.carta-banner h5, .carta-banner2 h5 {
+    position: absolute;
+    color: white;
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    border-radius: 5px;
+    bottom: 10px;
+    left: 10px;
+}
+
+.carta1 {
+    position: relative;
+    display: flex;
+    border: 1px solid black;
+    height: 380px; 
+    margin-top: 20px;
+}
+
+.carta1 h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgb(255, 255, 255);
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.carta1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.productos {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.productos h2{
+    display: flex;
+    align-items: start;
+    font-size: 30px;
+}
+
+.grid-productos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    grid-template-rows: repeat(3, auto);  
+    gap: 10px; 
+    justify-items: center;
+    margin: 0 auto
+    padding 0 20px;
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.producto1, .producto2, .producto3, .producto4, .producto5, .producto6, .producto7, .producto8 {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    max-width: 280px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.producto1 img, .producto2 img, .producto3 img, .producto4 img,
+.producto5 img, .producto6 img, .producto7 img, .producto8 img {
+    width: 100%;
+    height: 300px; 
+    object-fit: cover; 
+}
+
+.contenedor-productos-extra {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    justify-content: center;
+}
+
+.producto9, .producto10, .producto11 {
+    flex: 1;
+    width: 100%;
+    height: 250px;
+    display: flex;
+   justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    border: 1px solid #ddd;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; 
+}
+
+
+
+.producto9 img, .producto10 img, .producto11 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.producto9 h3, .producto10 h3, .producto11 h3,
+.producto9 h5, .producto10 h5, .producto11 h5 {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    border-radius: 5px;
+}
+.producto9 h3, .producto10 h3, .producto11 h3{
+    display: flex;
+    align-items: start;
+    margin-bottom: 180px;
+}
+
+button.agregar-carrito {
+    background: #000;
+    color: white;
+    border: 1px solid white;
+    padding: 14px 0;
+    width: 90%;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    display: block;
+    margin: 10px auto;
+}
+
+button.agregar-carrito:hover {
+    background: white;
+    color: black;
+    border: 1px solid black;
+}
+
+ footer {
+        background: #f8f8f8;
+        padding: 20px 0;
+        font-family: Arial, sans-serif;
+      }
+      .footer-container {
+        display: flex;
+        justify-content: space-around;
+        max-width: 1200px;
+        margin: auto;
+      }
+      .footer-section {
+        width: 22%;
+      }
+      .footer-section h4 {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      .footer-section ul {
+        list-style: none;
+        padding: 0;
+      }
+      .footer-section ul li {
+        margin-bottom: 10px;
+      }
+      .footer-section ul li a {
+        text-decoration: none;
+        color: #333;
+      }
+      .contact p {
+        margin: 5px 0;
+      }
+      .social-icons {
+        margin-top: 10px;
+      }
+      .social-icons a {
+        margin-right: 10px;
+        font-size: 20px;
+        color: #333;
+        text-decoration: none;
+      }
+      .social-icons a:hover {
+        color: #007bff;
+      }
+
+     
+@media(max-width:600px){
+
+    .barra-superior {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .contenedor-logo {
+        font-size: 28px;
+    }
+
+    .botones-superior1, .botones-superior2 {
+        flex-direction: column;
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .botones-superior1 button, .botones-superior2 button {
+        width: 50%;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    .form-busqueda {
+        width: 100%;
+    }
+
+    .input-con-icono input[type="search"] {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .contenedor-principal {
+        padding: 10px;
+    }
+
+    .banner {
+        flex-direction: column;
+    }
+
+    .cartas-banner {
+        width: 100%;
+    }
+
+    .carta-banner, .carta-banner2 {
+        height: auto;
+        margin-top: 10px;
+    }
+    .carta-banner h3{
+        font-size: 20px;
+    }
+    .carta-banner h5{
+        font-size: 14px;
+    }
+    .carta-banner2 h3{
+        font-size: 20px;
+    }
+    .carta-banner2 h5{
+        font-size: 14px;
+    }
+
+    .productos .grid-productos {
+        grid-template-columns: 1fr;
+    }
+
+    .contenedor-productos-extra {
+        grid-template-columns: 1fr;
+    }
+
+    footer .footer-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+    }
+
+    footer .footer-section {
+        padding: 10px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
+@media(min-width:601px)and (max-width:1024px){
+    .barra-superior{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .contenedor-logo{
+        font-size: 28px;
+    }
+    .botones-superior1, .botones-superior2{
+        flex-direction: column;
+        width: 100%;
+        align-items: flex-start;
+    }
+    .botones-superior1 button, .botones-superior2 button{
+        width: 50%;
+        padding: 10px;
+        font-size: 16px;
+    }
+    .form-busqueda{
+        width: 100%;
+    }
+    .input-con-icono input[type="search"]{
+        width: 100%;
+        padding: 10px;
+    }
+    .contenedor-principal{
+        padding: 10px;
+    }
+    .banner{
+        flex-direction: column;
+    }
+    .cartas-banner{
+        width: 100%;
+        height: 600px;
+    }
+    .carta-banner, .carta-banner2{
+        margin-top: 10px;
+    }
+    .carta-banner h3{
+        font-size: 20px;
+    }
+    .carta-banner h5{
+        font-size: 23px;
+    }
+    .carta-banner2 h3{
+        font-size: 20px;
+    }
+    .carta-banner2 h5{
+        font-size: 23px;
+    }
+
+.productos .grid-productos{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+}
+
+
+
+
+

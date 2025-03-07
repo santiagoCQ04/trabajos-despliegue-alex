@@ -1,0 +1,181 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    margin: 0px;
+    padding: 0px;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    background-color: floralwhite;
+    padding: 10px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h4 {
+    padding-left: 70px;
+}
+
+header:hover {
+    transform: translate3d(0px, -5px, 0px);
+}
+
+.container {
+    width: 100%;
+    height: auto;
+    margin: 20px auto;
+    background-color: rgb(101, 181, 250);
+    margin-top: 70px;
+    border: 1px solid black;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cartas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.contenido {
+    text-align: center;
+}
+
+.carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+    display: grid;
+    height: 400px;
+    grid-template-rows: repeat(2, 1fr);
+    border: 1px solid black;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.carta_1:hover, .carta_2:hover, .carta_3:hover, .carta_4:hover, .carta_5:hover {
+    transform: translateY(10px) scale(1.05);
+}
+
+.cartas img {
+    flex: 1;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+    background-color: #ffffff;
+    cursor: crosshair;
+    object-fit: cover;
+}
+
+@media (max-width: 599px) {
+    .cartas {
+        grid-template-columns: 1fr;
+    }
+
+    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+        height: auto;
+    }
+
+    header h4 {
+        padding-left: 10px;
+    }
+
+    .container {
+        padding: 5px;
+    }
+
+    .cartas img {
+        height: 100%;
+        width: 100%;
+        object-fit: contain; /* Asegura que las imágenes no se vean borrosas ni se desplacen */
+    }
+}
+
+@media (max-width: 600px) {
+    .cartas {
+        grid-template-columns: 1fr;
+    }
+
+    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+        height: 520px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items:center;
+        padding: 10px;
+    }
+
+    header h1, header h4 {
+        margin: 0;
+    }
+
+    header h4 {
+        padding-left: 0;
+        margin-top: 5px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .cartas img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    .cartas {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+        height: auto;
+    }
+
+    header h4 {
+        padding-left: 40px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .cartas img {
+        height: 180px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .cartas {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+        height: 400px;
+    }
+
+    header h4 {
+        padding-left: 70px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    .cartas img {
+        height: 200px;
+    }
+}
