@@ -355,6 +355,7 @@ ul li::before {
     margin: 5px 0;
     font-size: 14px;
 }
+
 @media only screen and (max-width: 5000px) {
     .container {
         width: 90%;
@@ -442,10 +443,8 @@ ul li::before {
         height: 90px;
         border-radius: 50%;
         object-fit: cover;
-        padding-top: 10px;
         object-fit: cover;
         position: relative;
-        top: -5%;
     }
 
     .container-avatar {
@@ -455,7 +454,6 @@ ul li::before {
         background-color: transparent;
         box-shadow: none;
         position: relative;
-        top: -10%;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         z-index: 5;
     }
@@ -520,92 +518,6 @@ ul li::before {
     }
 
     .bar {
-        display: grid;
-        grid-template-rows: repeat(7, 80px);
-        flex-wrap: wrap;
-        height: auto;
-        padding: 10px;
-        justify-content: center;
-        row-gap: 10px;
-    }
-
-    .face_img {
-        width: 100px;
-        height: 100px;
-        border-radius: 10%;
-        object-fit: cover;
-        padding-top: 10px;
-        object-fit: cover;
-        position: relative;
-        top: -5%;
-    }
-
-    .container-avatar {
-        width: 100px;
-        height: 100px;
-        background-color: transparent;
-        box-shadow: none;
-        position: relative;
-        top: -10%;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        z-index: 5;
-    }
-
-    .blocks {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .block1,
-    .block2,
-    .block3,
-    .block4,
-    .block5 {
-        width: auto;
-    }
-
-    .block1,
-    .block2,
-    .block3,
-    .block4,
-    .block5 {
-        width: auto;
-    }
-
-    .icons-bar {
-        padding: 10px;
-    }
-
-    .iconos_interest {
-        gap: 15px;
-    }
-
-    .iconos{
-        display: flex;
-        flex-direction: column-reverse;
-        size: 50px;
-    }
-
-  
-}
-
-@media only screen and (max-width: 800px) {
-    .part1Up {
-        padding-left: 40px;
-    }
-
-    .part1Down {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-        padding: 20px 40px;
-    }
-
-    .part2 {
-        grid-template-columns: 1fr;
-    }
-
-    .bar {
         flex-wrap: wrap;
         height: auto;
         padding: 10px;
@@ -625,6 +537,7 @@ ul li::before {
         height: 100px;
         border-radius: 50%;
         object-fit: cover;
+        object-fit: cover;
         position: relative;
     }
 
@@ -635,8 +548,8 @@ ul li::before {
         box-shadow: none;
         position: relative;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border: 4px solid rgb(190, 184, 184);
         z-index: 5;
-        border: 4px solid #aeb4b9;
     }
 
     .blocks {
@@ -660,6 +573,16 @@ ul li::before {
         width: auto;
     }
 
+    .iconos_interest {
+        gap: 15px;
+    }
+
+    .iconos{
+        display: flex;
+        size: 50px;
+    }
+
+  
 }
 @media only screen and (max-width: 476px) {
     .container {
