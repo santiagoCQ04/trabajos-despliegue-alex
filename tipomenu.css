@@ -60,12 +60,12 @@ header:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
     border: 1px solid #ccc;
-}
+} 
 
-.carta_1:hover, .carta_2:hover, .carta_3:hover, .carta_4:hover, .carta_5:hover {
+ .carta_1:hover, .carta_2:hover, .carta_3:hover, .carta_4:hover, .carta_5:hover {
     transform: translateY(10px) scale(1.05);
 }
-
+ 
 .cartas img {
     flex: 1;
     width: 100%;
