@@ -18,6 +18,8 @@ body {
 .contenedor-logo {
     font-size: 35px;
     font-weight: bold;
+    margin-left: 80px;
+    box-sizing: border-box;
 }
 
 .contenedor-logo .subtitulo {
@@ -67,8 +69,9 @@ body {
 
 .botones-superior2{
     display: flex;
-    gap: 10px;
+   /*  gap: 10px; */
     margin-left: auto; 
+
 }
 
 .botones-superior2 button {
@@ -82,7 +85,8 @@ body {
     gap: 10px;
     cursor: pointer;
     border-radius: 5px;
-    justify-content: flex-start; 
+    margin-right: 125px;
+    box-sizing: border-box;
 }
 
 .botones-superior2 button:hover {
@@ -118,6 +122,7 @@ body {
     right: 10px;
     font-size: 20px;
     color: #333;
+    margin-right: 55px;
 }
 
 .contenedor-principal {
@@ -165,7 +170,7 @@ nav ul li a {
 .cartas-banner {
     display: flex;
     flex-direction: column; 
-    width:600px; 
+    width:540px; 
     height: 400px;
 }
 
@@ -177,7 +182,7 @@ nav ul li a {
     background: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden; 
-    margin-top: 20px; 
+    margin-top: 10px; 
 }
 
 .carta-banner {
@@ -239,20 +244,21 @@ nav ul li a {
 }
 
 .carta1 img {
-    width: 100%;
+    width: 630px;
     height: 100%;
     object-fit: cover;
 }
 
 .productos {
     text-align: center;
-    padding: 40px 20px;
+    /* padding: 40px 20px; */
 }
 
 .productos h2{
     display: flex;
     align-items: start;
     font-size: 30px;
+    margin-left: 6px;
 }
 
 
@@ -280,6 +286,7 @@ nav ul li a {
 h4{
     display: flex;
     align-items: self-start;
+    margin-left: 6px;
 }
 
 .producto1 img, .producto2 img, .producto3 img, .producto4 img,
@@ -298,6 +305,7 @@ h4{
     margin: 20px auto;
     justify-content: center;
     align-items: start; /* Alinear las cartas con las de arriba */
+    box-sizing: border-box;
 }
 
 .producto9, .producto10, .producto11 {
@@ -370,6 +378,7 @@ button.agregar-carrito:hover {
         justify-content: space-around;
         max-width: 1200px;
         margin: auto;
+        box-sizing: border-box;
       }
       .footer-section {
         width: 22%;
@@ -414,19 +423,27 @@ button.agregar-carrito:hover {
     }
 
     .contenedor-logo {
-        font-size: 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-left: 180px;
+        font-size: 45px;
     }
 
-    .botones-superior1, .botones-superior2 {
+    /* .botones-superior1, .botones-superior2 {
         flex-direction: column;
         width: 100%;
         align-items: flex-start;
-    }
+    } */
 
     .botones-superior1 button, .botones-superior2 button {
         width: 50%;
         padding: 10px;
         font-size: 16px;
+    }
+    .botones-superior2{
+        width: 100%;
     }
 
     .form-busqueda {
