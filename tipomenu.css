@@ -49,7 +49,7 @@ header:hover {
     text-align: center;
 }
 
-.carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+.carta_1, .carta_2, .carta_3, .carta_4, .carta_5, .carta_6 {
     display: grid;
     height: 400px;
     grid-template-rows: repeat(2, 1fr);
@@ -62,7 +62,7 @@ header:hover {
     border: 1px solid #ccc;
 } 
 
- .carta_1:hover, .carta_2:hover, .carta_3:hover, .carta_4:hover, .carta_5:hover {
+ .carta_1:hover, .carta_2:hover, .carta_3:hover, .carta_4:hover, .carta_5:hover, .carta_6:hover {
     transform: translateY(10px) scale(1.05);
 }
  
@@ -82,7 +82,7 @@ header:hover {
         grid-template-columns: 1fr;
     }
 
-    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5, .carta_6 {
         height: auto;
     }
 
@@ -106,7 +106,7 @@ header:hover {
         grid-template-columns: 1fr;
     }
 
-    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5, .carta_6   {
         height: 520px;
     }
 
@@ -141,7 +141,7 @@ header:hover {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5 {
+    .carta_1, .carta_2, .carta_3, .carta_4, .carta_5, .carta_6 {
         height: auto;
     }
 
