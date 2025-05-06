@@ -1,570 +1,1092 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokemon Card</title>
-</head>
-
-<body>
-    <div class="carta">
-        <div class="lado-izquierdo">
-            <h1 id="nombre"></h1>
-            <h2>ID: <span id="id"></span></h2>
-            <div class="imagen-container">
-                <img src="" alt="" id="imagen">
-                <img src="" alt="" id="imagen2">
-            </div>
-            <div id="tipoContainer">
-                <h2>Tipo:</h2>
-                <div id="tipoBtn"></div>
-            </div>
-            <div class="stats-container">
-                <h2 id="altura"></h2>
-                <h2 id="peso"></h2>
-            </div>
-        </div>
-        <div class="lado-derecho">
-            <div id="habilidadesContainer">
-                <h2>Habilidades:</h2>
-                <div id="habilidadesList"></div>
-            </div>
-            <div id="debilidadesContainer">
-                <h2>Debilidades:</h2>
-                <div id="debilidadesList"></div>
-            </div>
-            <div id="estadisticas"></div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            const pokemonId = aleatorio();
-            const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
-            const namecolor=await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${res.data.id}/`)
-            console.log(res);
-            
-            document.getElementById("nombre").textContent = res.data.name;
-            document.getElementById("id").textContent = `#${res.data.id}`; 
-            document.getElementById("altura").textContent = `Altura: ${res.data.height/10} m`;
-            document.getElementById("peso").textContent = `Peso: ${res.data.weight/10} Kg`;
-            document.getElementById("imagen").src = res.data.sprites.other.showdown.back_default;
-            document.getElementById("imagen2").src = res.data.sprites.other.showdown.front_default;
-        
-           
-            const tipoBtn = document.getElementById("tipoBtn");
-            tipoBtn.innerHTML = ""; 
-            
-            const pokemonTypes = [];
-            
-         
-            res.data.types.forEach(typeInfo => {
-                const tipo = typeInfo.type.name;
-                pokemonTypes.push(tipo);
-                const boton = document.createElement("button");
-                boton.textContent = tipo;
-                boton.className = `tipo-btn ${tipo}`;
-                tipoBtn.appendChild(boton);
-            });
-          
-            const carta = document.querySelector('.carta');
-            if (pokemonTypes.length === 1) {
-                // Si solo hay un tipo
-                carta.style.background = `var(--${pokemonTypes[0]}-color)`;
-            } else if (pokemonTypes.length === 2) {
-                // Si hay dos tipos, crear degradado suave
-                carta.style.background = `linear-gradient(45deg, 
-                    var(--${pokemonTypes[0]}-color) 0%, 
-                    var(--${pokemonTypes[1]}-color) 100%)`;
-            }
-            
-          
-            const habilidadesList = document.getElementById("habilidadesList");
-            habilidadesList.innerHTML = "";
-            
-            res.data.abilities.forEach(abilityInfo => {
-                const habilidad = abilityInfo.ability.name;
-                const boton = document.createElement("button");
-                boton.textContent = habilidad;
-                boton.className = "tipo-btn";
-                
-                if (abilityInfo.is_hidden) {
-                    boton.textContent += " (oculta)";
-                    boton.style.backgroundColor = "#A040A0"; // habilidades ocultas
-                } else {
-                    boton.style.backgroundColor = "#78C850"; //  habilidades normales
-                }
-                
-                habilidadesList.appendChild(boton);
-            });
-            
-            const debilidadesList = document.getElementById("debilidadesList");
-            debilidadesList.innerHTML = ""; 
-            
-            //   debilidades 
-            const fetchTypeData = async (type) => {
-                try {
-                    const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`);
-                    return response.data.damage_relations;
-                } catch (error) {
-                    console.error(`Error obteniendo datos del tipo ${type}:`, error);
-                    return null;
-                }
-            };
-        
-            const calculateWeaknesses = async () => {
-                const typeDataPromises = pokemonTypes.map(type => fetchTypeData(type));
-                const typeDataResults = await Promise.all(typeDataPromises);
-                
-                // Recopilar todas las relaciones de daño
-                const weaknessMap = {};
-                const resistanceMap = {};
-                const immunityTypes = new Set();
-                
-                typeDataResults.forEach(typeData => {
-                    if (!typeData) return;
-                    
-                    // Inmunidades
-                    typeData.no_damage_from.forEach(immunity => {
-                        immunityTypes.add(immunity.name);
-                    });
-                    
-                    // Resistencias 
-                    typeData.half_damage_from.forEach(resistance => {
-                        resistanceMap[resistance.name] = (resistanceMap[resistance.name] || 0) + 1;
-                    });
-                    
-                    // Debilidades
-                    typeData.double_damage_from.forEach(weakness => {
-                        weaknessMap[weakness.name] = (weaknessMap[weakness.name] || 0) + 1;
-                    });
-                });
-             
-            const estadisticas = document.getElementById("estadisticas");
-            estadisticas.innerHTML = "<h2>Estadisticas:</h2>"; 
-
-            res.data.stats.forEach(stat => {
-                const statDiv = document.createElement("div");
-                statDiv.style.marginBottom = "10px";
-                statDiv.style.textAlign = "left";
-                statDiv.style.width = "90%";
-                statDiv.style.margin = "5px auto";
-
-                const label = document.createElement("div");
-                label.textContent = `${stat.stat.name.charAt(0).toUpperCase() + stat.stat.name.slice(1)}: ${stat.base_stat}`;
-                label.style.color = "white";
-                label.style.marginBottom = "5px";
-                statDiv.appendChild(label);
-
-                const barraProgreso = document.createElement("div");
-                barraProgreso.classList.add("barra-progreso");
-                
-                const barra = document.createElement("div");
-                barra.classList.add("barra");
-                
-                // Usar el color del pokémon para las barras
-                const pokemonColor = namecolor.data.color.name;
-                barra.style.width = `${(stat.base_stat / 255) * 100}%`;
-                
-                
-                if (stat.base_stat >= 150) {
-                    barra.style.backgroundColor = "#4CAF50";
-                } else if (stat.base_stat >= 90) {
-                    barra.style.backgroundColor = "#2196F3"; 
-                } else if (stat.base_stat >= 50) {
-                    barra.style.backgroundColor = "#FFC107"; 
-                } else {
-                    barra.style.backgroundColor = "#f44336"; 
-                }
-
-                barraProgreso.appendChild(barra);
-                statDiv.appendChild(barraProgreso);
-                estadisticas.appendChild(statDiv);
-            });
-                
-                const finalWeaknesses = [];
-                
-                for (const [type, count] of Object.entries(weaknessMap)) {
-                    // Si es inmune, no es una debilidad
-                    if (immunityTypes.has(type)) {
-                        continue;
-                    }
-                    
-                    // Calcular el factor de daño final
-                    const resistCount = resistanceMap[type] || 0;
-                    const factor = Math.pow(2, count) / Math.pow(2, resistCount);
-                    
-                 
-                    if (factor > 1) {
-                        finalWeaknesses.push({ type, factor });
-                    }
-                }
-                
-                // Ordenar por factor de debilidad (más alto primero)
-                finalWeaknesses.sort((a, b) => b.factor - a.factor);
-                
-           
-                finalWeaknesses.forEach(weakness => {
-                    const boton = document.createElement("button");
-                    boton.textContent = weakness.type;
-                    if (weakness.factor >= 4) {
-                        boton.textContent += " (x4)";
-                        boton.className = `tipo-btn ${weakness.type} super-weak`;
-                    } else if (weakness.factor >= 2) {
-                        boton.textContent += " (x2)";
-                        boton.className = `tipo-btn ${weakness.type}`;
-                    }
-                    debilidadesList.appendChild(boton);
-                });
-                
-               
-                if (finalWeaknesses.length === 0) {
-                    const noWeaknesses = document.createElement("div");
-                    noWeaknesses.textContent = "¡Sin debilidades!";
-                    noWeaknesses.className = "no-weakness";
-                    debilidadesList.appendChild(noWeaknesses);
-                }
-            };
-            calculateWeaknesses();
-        });
-        
-        function aleatorio() {
-            const numero = Math.floor(Math.random() * 300) + 1;
-            return numero;
-        }
-    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Fondo Animado con Perritos</title>
     <style>
-        :root {
-            --normal-color: #A8A878;
-            --fire-color: #F08030;
-            --water-color: #6890F0;
-            --grass-color: #78C850;
-            --electric-color: #F8D030;
-            --ice-color: #98D8D8;
-            --fighting-color: #C03028;
-            --poison-color: #A040A0;
-            --ground-color: #E0C068;
-            --flying-color: #A890F0;
-            --psychic-color: #F85888;
-            --bug-color: #A8B820;
-            --rock-color: #B8A038;
-            --ghost-color: #705898;
-            --dragon-color: #7038F8;
-            --dark-color: #705848;
-            --steel-color: #B8B8D0;
-            --fairy-color: #EE99AC;
-        }
-
         body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image: url('https://assets.pokemon.com//assets/cms2-es-es/img/misc/virtual-backgrounds/sword-shield/pokemon-in-the-wild.png');
-            background-position: center center;
-            background-attachment: fixed;
-            background-size: cover;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .carta {
-            display: grid;
-            grid-template-columns: 45% 55%;
-            width: 70%;
-            max-width: 1200px;
-            background-color: rgba(255, 255, 255, 0.85);
-            border: 2px solid rgb(97, 247, 247);
-            animation: borderContenedor 0.9s linear infinite;
-            border-radius: 10px;
-            padding: 15px;
-            box-sizing: border-box;
-            gap: 15px;
-            transition: background-color 0.3s ease;
-            transition: all 0.5s ease;
-            background-size: 200% 200%;
-            transition: background 0.5s ease;
-            background-size: 150% 150%;
-            backdrop-filter: blur(5px);
-        }
-
-        .lado-izquierdo {
-            padding-right: 20px;
-            border-right: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .lado-izquierdo img {
-            width: 200px;
-            max-height: 150px;
-            object-fit: contain;
-        }
-
-        .imagen-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .lado-derecho {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        #nombre, #id {
-            text-align: center;
-            margin: 5px 0;
-        }
-
-        .imagen-container {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .carta h1 {
-            color: rgb(9, 36, 0);
-            font-size: 32px;
-            text-align: center;
-            margin-top: 10px;
-            text-transform: capitalize;
-        }
-        
-        .carta h2 {
-            color: rgb(9, 36, 0);
-            font-size: 30px;
-            text-align: center;
-            margin-top: 10px;
-        }
-        
-        @keyframes borderContenedor {
-            0% {
-                box-shadow: 0px 0px 10px rgb(9, 36, 0);
-            }
-            50% {
-                box-shadow: 0px 0px 20px rgb(9, 36, 0);
-            }
-            100% {
-                box-shadow: 0px 0px 10px rgb(5, 218, 218);
-            }
-        }
-        
-         #habilidadesContainer, #debilidadesContainer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 5px 0;
-            width: 100%;
-        }
-        
-         #debilidadesList {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-        }
-        #tipoBtn{
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            border:1px solid black;
-            border-radius: 5px;
-        }
-        #habilidadesList{
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-        }
-        #tipoContainer{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 15px 0;
-            width: 100%;
-        }
-
-        #tipoContainer h2 {
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        
-        .tipo-btn {
-            margin: 2px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: white;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 14px;
-        }
-        
-        .habilidad-item {
-            padding: 8px 16px;
-            border-radius: 10px;
-            background-color: #f0f0f0;
-            margin: 5px 0;
-            font-size: 18px;
-            text-transform: capitalize;
-            width: 80%;
-            text-align: center;
-        }
-        
-        .habilidad-oculta {
-            background-color: #e0e0e0;
-            font-style: italic;
-        }
-        
-        .super-weak {
-            box-shadow: 0 0 10px red;
-        }
-        
-        .no-weakness {
-            font-size: 18px;
-            font-weight: bold;
-            color: green;
-            margin: 10px 0;
-        }
-        
-        .normal { background-color: #A8A878; }
-        .fire { background-color: #F08030; }
-        .water { background-color: #6890F0; }
-        .grass { background-color: #78C850; }
-        .electric { background-color: #F8D030; }
-        .ice { background-color: #98D8D8; }
-        .fighting { background-color: #C03028; }
-        .poison { background-color: #A040A0; }
-        .ground { background-color: #E0C068; }
-        .flying { background-color: #A890F0; }
-        .psychic { background-color: #F85888; }
-        .bug { background-color: #A8B820; }
-        .rock { background-color: #B8A038; }
-        .ghost { background-color: #705898; }
-        .dragon { background-color: #7038F8; }
-        .dark { background-color: #705848; }
-        .steel { background-color: #B8B8D0; }
-        .fairy { background-color: #EE99AC; }
-        
-        .stats-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 15px;
-            gap: 5px;
-        }
-
-        .stats-container h2 {
             margin: 0;
-            color: rgb(9, 36, 0);
-            font-size: 18px;
-        }
-
-        .barra-progreso {
-            width: 100%;
-            height: 15px;
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 20px;
+            padding: 0;
+            height: 100vh;
             overflow: hidden;
-            margin-top: 5px;
-            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
 
-        .barra {
-            height: 100%;
-            border-radius: 20px;
-            transition: width 0.8s ease-in-out;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        #estadisticas {
+        .fondo-contenedor {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
+            height: 100%;
+            z-index: -1;
         }
 
-        #estadisticas h2 {
+        .fondo-imagen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            transform-origin: center center;
+            image-rendering: -webkit-optimize-contrast;
+            /* Para Chrome/Safari */
+            image-rendering: crisp-edges;
+            /* Para Firefox */
+            -ms-interpolation-mode: nearest-neighbor;
+            /* Para IE */
+            transition: opacity 1.5s ease-in-out;
+            will-change: transform, opacity;
+        }
+
+        #imagen1 {
+            background-image: url('https://petia.es/wp-content/uploads/2024/11/cambio_gatos.jpg');
+            animation: zoom1 8s infinite;
+        }
+
+        #imagen2 {
+            background-image: url('https://cdn.prod.website-files.com/63634f4a7b868a399577cf37/63e10bf28752f848463155b3_razas%20de%20gatos.jpg');
+            animation: zoom2 8s infinite;
+        }
+
+        #imagen3 {
+            background-image: url('https://media.es.wired.com/photos/657cb5b81e17b099f8f9e15c/3:2/w_3009,h_2006,c_limit/gatos%20172050389.jpg');
+            animation: zoom3 8s infinite;
+        }
+
+        #imagen4 {
+            background-image: url('https://cdn.prod.website-files.com/63634f4a7b868a399577cf37/63e10adfa64a34de9592b9a3_nombres%20para%20perritos%20blancos.jpg');
+            animation: zoom4 8s infinite;
+        }
+
+        @keyframes zoom1 {
+
+            0%,
+            20% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            25%,
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoom2 {
+
+            0%,
+            20% {
+                transform: scale(1.0);
+                opacity: 0;
+            }
+
+            25%,
+            45% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            50%,
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoom3 {
+
+            0%,
+            45% {
+                transform: scale(1.0);
+                opacity: 0;
+            }
+
+            50%,
+            70% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            75%,
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoom4 {
+
+            0%,
+            70% {
+                transform: scale(1.0);
+                opacity: 0;
+            }
+
+            75%,
+            95% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        .tabla-contenedor {
+            max-width: 90%;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabla-contenedor h2 {
+            display: flex;
+            justify-content: center;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
+            color: #000000;
+
+        }
+
+        .tabla-responsive {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .tabla {
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 100%;
+        }
+
+        .tabla thead th {
+            position: sticky;
+            top: 0;
+            background-color: #c3e0fd;
+            z-index: 1;
+        }
+
+        .tabla tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        .grupo-botones {
+            margin-bottom: 20px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        h2 {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mb-3 {
+            color: #f1f1f1;
             font-size: 20px;
         }
 
-        .carta h1, .carta h2, #estadisticas h2, .stats-container h2 {
+        .modal-contenido {
+            background-image: url('https://content.skyscnr.com/m/3eff5b3d743d48bb/original/GettyImages-486348592.jpg?resize=1800px:1800px&quality=100');
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+        }
+
+
+        #modalConfirmar {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-confirmar-contenido {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 0;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .modal-encabezado {
+            background-color: #dc3545;
             color: white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            position: relative;
         }
 
+        .modal-encabezado h5 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .modal-cerrar {
+            color: white;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-cuerpo {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-pie {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-secundario {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-peligro {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-secundario:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-peligro:hover {
+            background-color: #c82333;
+        }
+
+        .cerrar {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .formulario-contenedor {
+            padding: 20px;
+        }
+
+        .imagen {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .imagen img {
+            width: 80px;
+            height: 80px;
+        }
+
+        #abrirModalBtn,
+        #btnEliminarTodos {
+            height: 50px;
+        }
+
+        #abrirModalBtn:hover {
+            background-color: #0056b3;
+        }
+
+        .alerta {
+            margin-top: 5px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .accion-botones {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-eliminar {
+            padding: 4px 8px;
+            font-size: 14px;
+        }
+
+        .btn-actualizar {
+            padding: 4px 8px;
+            font-size: 14px;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .btn-actualizar:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+        @media (max-width: 400px) {
+            .fondo-contenedor {
+                display: none;
+            }
+
+            .tabla-contenedor {
+                width: 95%;
+                padding: 20px;
+                margin: 20px auto;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .tabla th,
+            .tabla td {
+                padding: 8px 5px;
+                font-size: 12px;
+            }
+
+        }
         @media (max-width: 600px) {
-            .carta {
-                grid-template-columns: 1fr;
-                width: 90%;
+            .tabla-contenedor {
+                width: 95%;
+                padding: 20px;
+                margin: 20px auto;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
             }
 
-            .lado-izquierdo {
-                padding-right: 0;
-                border-right: none;
+            .tabla-contenedor h2 {
+                font-size: 18px;
             }
 
-            .lado-derecho {
-                padding-left: 0;
+            .tabla-responsive {
+                font-size: 12px;
             }
 
-            .imagen-container {
-                flex-direction: row;
-                gap: 10px;
+            .tabla-contenedor {
+                padding: 15px 10px;
+            }
+
+            .tabla th,
+            .tabla td {
+                padding: 8px 5px;
+                font-size: 12px;
+            }
+
+            .modal-contenido {
+                width: 95%;
+                margin: 5% auto;
             }
         }
+
         @media (min-width: 601px) and (max-width: 1024px) {
-            .carta {
-                grid-template-columns: 1fr 1fr;
-                width: 80%;
+            .tabla-contenedor {
+                width: 85%;
+                padding: 25px;
+                margin: 30px auto;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
             }
 
-            .lado-izquierdo {
-                padding-right: 0;
-                border-right: none;
+            .tabla-contenedor h2 {
+                font-size: 20px;
             }
 
-            .lado-derecho {
-                padding-left: 0;
+            .tabla th,
+            .tabla td {
+                padding: 12px 8px;
+                font-size: 14px;
             }
-
-            .imagen-container {
-                flex-direction: row;
-                gap: 10px;
-            }
-            
         }
+
         @media (min-width: 1025px) {
-            .carta {
-                grid-template-columns: 1fr 1fr;
-                width: 70%;
+            .tabla-contenedor {
+                width: 80%;
+                padding: 30px;
+                margin: 50px auto;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             }
 
-            .lado-izquierdo {
-                padding-right: 0;
-                border-right: none;
+            .tabla-contenedor h2 {
+                font-size: 24px;
+                margin-bottom: 30px;
             }
 
-            .lado-derecho {
-                padding-left: 0;
-            }
-
-            .imagen-container {
-                flex-direction: column;
-                gap: 10px;
+            .tabla th,
+            .tabla td {
+                padding: 12px;
+                font-size: 16px;
             }
         }
     </style>
+</head>
+
+<body>
+    <div class="fondo-contenedor">
+        <div id="imagen1" class="fondo-imagen"></div>
+        <div id="imagen2" class="fondo-imagen"></div>
+        <div id="imagen3" class="fondo-imagen"></div>
+        <div id="imagen4" class="fondo-imagen"></div>
+    </div>
+    <div class="contenedor">
+        <div class="tabla-contenedor">
+            <h2 class="texto-centro mb-4">Usuarios Registrados</h2>
+
+            <div class="grupo-botones mb-3 w-50">
+                <button id="abrirModalBtn" class="btn btn-primary w-50">Abrir Formulario</button>
+                <button id="btnEliminarTodos" class="btn btn-danger w-50">Eliminar Todos</button>
+            </div>
+
+            <div class="tabla-responsive">
+                <table class="tabla table-striped table-hover" id="tablaUsuarios">
+                    <thead class="tabla-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Ciudad</th>
+                            <th scope="col">Género</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyUsuarios">
+                        <!-- Los usuarios se agregarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar todos los registros -->
+    <div id="modalConfirmar">
+        <div class="modal-confirmar-contenido">
+            <div class="modal-encabezado">
+                <h5 id="modalConfirmarTitulo">Confirmar eliminación</h5>
+                <span class="modal-cerrar">&times;</span>
+            </div>
+            <div class="modal-cuerpo">
+                <p id="modalConfirmarMensaje">¿Estás seguro de que quieres eliminar todos los registros?</p>
+            </div>
+            <div class="modal-pie">
+                <button class="btn-secundario" id="btnCancelar">Cancelar</button>
+                <button class="btn-peligro" id="btnConfirmarEliminar" data-index="-1">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="miModal" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <div class="formulario-contenedor">
+                <h2 id="formularioTitulo">Formulario de Registro</h2>
+                <div class="imagen">
+                    <img src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.5.0/collection/components/icon/svg/person-circle-outline.svg"
+                        alt="Perfil">
+                </div>
+
+                <div id="alertaExito" class="alert alert-success d-none" role="alert">
+                    ¡Usuario registrado con éxito!
+                </div>
+
+                <form id="formularioRegistro">
+                    <!-- Campo oculto para almacenar el índice del usuario que se está editando -->
+                    <input type="hidden" id="usuarioIndex" value="-1">
+
+                    <div class="mb-2">
+                        <input type="text" id="nombre" class="form-control" placeholder="Nombre">
+                        <div class="alert alert-danger d-none alerta" id="alertNombre">El nombre es obligatorio.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="text" id="apellido" class="form-control" placeholder="Apellido">
+                        <div class="alert alert-danger d-none alerta" id="alertApellido">El apellido es obligatorio.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="text" id="telefono" class="form-control" placeholder="Teléfono">
+                        <div class="alert alert-danger d-none alerta" id="alertTelefono">El teléfono es obligatorio.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="text" id="direccion" class="form-control" placeholder="Dirección">
+                        <div class="alert alert-danger d-none alerta" id="alertDireccion">La dirección es obligatoria.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="text" id="ciudad" class="form-control" placeholder="Ciudad">
+                        <div class="alert alert-danger d-none alerta" id="alertCiudad">La ciudad es obligatoria.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <select id="tipoDocumento" class="form-select">
+                            <option value="" disabled selected>Tipo de documento</option>
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="NIT">NIT</option>
+                        </select>
+                        <div class="alert alert-danger d-none alerta" id="alertTipoDoc">Seleccione un tipo de documento.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="number" id="documento" class="form-control" placeholder="Documento">
+                        <div class="alert alert-danger d-none alerta" id="alertDocumento">El número de documento es
+                            obligatorio.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="email" id="correo" class="form-control" placeholder="Correo electrónico">
+                        <div class="alert alert-danger d-none alerta" id="alertCorreo">El correo es obligatorio.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="password" id="contrasena" class="form-control" placeholder="Contraseña">
+                        <div class="alert alert-danger d-none alerta" id="alertContrasena">La contraseña es obligatoria.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="datetime-local" id="tiempo" class="form-control">
+                        <div class="alert alert-danger d-none alerta" id="alertTiempo">La fecha de nacimiento es
+                            obligatoria.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <span>Género:</span>
+                        <label class="me-2"><input type="radio" name="genero" value="Masculino"> Masculino</label>
+                        <label><input type="radio" name="genero" value="Femenino"> Femenino</label>
+                        <div class="alert alert-danger d-none alerta" id="alertGenero">Seleccione un género.</div>
+                    </div>
+
+                    <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>
+                    <button type="button" id="btnActualizar"
+                        class="btn btn-warning w-100 mt-2 d-none">Actualizar</button>
+                    <button type="button" id="btnCancelarEdicion"
+                        class="btn btn-secondary w-100 mt-2 d-none">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tablaUsuarios = document.getElementById("tablaUsuarios");
+        const tbodyUsuarios = document.getElementById("tbodyUsuarios");
+        const btnEliminarTodos = document.getElementById("btnEliminarTodos");
+        const miModal = document.getElementById("miModal");
+        const abrirModalBtn = document.getElementById("abrirModalBtn");
+        const cerrarBtn = document.querySelector(".cerrar");
+        const formularioRegistro = document.getElementById("formularioRegistro");
+        const alertaExito = document.getElementById("alertaExito");
+        const formularioTitulo = document.getElementById("formularioTitulo");
+        const btnRegistrar = document.getElementById("btnRegistrar");
+        const btnActualizar = document.getElementById("btnActualizar");
+        const btnCancelarEdicion = document.getElementById("btnCancelarEdicion");
+        const usuarioIndexInput = document.getElementById("usuarioIndex");
+
+        const modalConfirmar = document.getElementById("modalConfirmar");
+        const btnCancelar = document.getElementById("btnCancelar");
+        const btnConfirmarEliminar = document.getElementById("btnConfirmarEliminar");
+        const modalCerrar = document.querySelector(".modal-cerrar");
+        const modalConfirmarTitulo = document.getElementById("modalConfirmarTitulo");
+        const modalConfirmarMensaje = document.getElementById("modalConfirmarMensaje");
+
+        let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+        function actualizarTabla() {
+
+            while (tbodyUsuarios.firstChild) {
+                tbodyUsuarios.removeChild(tbodyUsuarios.firstChild);
+            }
+
+
+            if (usuarios.length === 0) {
+                const fila = document.createElement("tr");
+                const celda = document.createElement("td");
+                celda.setAttribute("colspan", "9"); es
+                celda.className = "text-center";
+                celda.textContent = "No hay usuarios registrados";
+                fila.appendChild(celda);
+                tbodyUsuarios.appendChild(fila);
+                return;
+            }
+
+
+            usuarios.forEach((usuario, index) => {
+                const fila = document.createElement("tr");
+
+                // Crear celdas
+                const celdaIndex = document.createElement("td");
+                celdaIndex.textContent = index + 1;
+
+                const celdaNombre = document.createElement("td");
+                celdaNombre.textContent = usuario.nombre;
+
+                const celdaApellido = document.createElement("td");
+                celdaApellido.textContent = usuario.apellido;
+
+                const celdaDocumento = document.createElement("td");
+                celdaDocumento.textContent = `${usuario.tipoDocumento} ${usuario.documento}`;
+
+                const celdaCorreo = document.createElement("td");
+                celdaCorreo.textContent = usuario.correo;
+
+                const celdaTelefono = document.createElement("td");
+                celdaTelefono.textContent = usuario.telefono;
+
+                const celdaCiudad = document.createElement("td");
+                celdaCiudad.textContent = usuario.ciudad;
+
+                const celdaGenero = document.createElement("td");
+                celdaGenero.textContent = usuario.genero;
+
+                // Celda de acciones
+                const celdaAcciones = document.createElement("td");
+                celdaAcciones.className = "accion-botones";
+
+                const btnActualizar = document.createElement("button");
+                btnActualizar.className = "btn btn-warning btn-actualizar";
+                btnActualizar.textContent = "Actualizar";
+                btnActualizar.dataset.index = index;
+                btnActualizar.addEventListener('click', function () {
+                    cargarUsuarioParaEditar(index);
+                });
+
+                const btnEliminar = document.createElement("button");
+                btnEliminar.className = "btn btn-danger btn-eliminar";
+                btnEliminar.textContent = "Eliminar";
+                btnEliminar.dataset.index = index;
+                btnEliminar.addEventListener('click', function () {
+                    mostrarModalConfirmacion(index);
+                });
+
+
+                celdaAcciones.appendChild(btnActualizar);
+                celdaAcciones.appendChild(btnEliminar);
+
+
+                fila.appendChild(celdaIndex);
+                fila.appendChild(celdaNombre);
+                fila.appendChild(celdaApellido);
+                fila.appendChild(celdaDocumento);
+                fila.appendChild(celdaCorreo);
+                fila.appendChild(celdaTelefono);
+                fila.appendChild(celdaCiudad);
+                fila.appendChild(celdaGenero);
+                fila.appendChild(celdaAcciones);
+
+                tbodyUsuarios.appendChild(fila);
+            });
+        }
+
+
+        function cargarUsuarioParaEditar(index) {
+            const usuario = usuarios[index];
+
+
+            usuarioIndexInput.value = index;
+
+
+            document.getElementById('nombre').value = usuario.nombre;
+            document.getElementById('apellido').value = usuario.apellido;
+            document.getElementById('telefono').value = usuario.telefono;
+            document.getElementById('direccion').value = usuario.direccion;
+            document.getElementById('ciudad').value = usuario.ciudad;
+            document.getElementById('tipoDocumento').value = usuario.tipoDocumento;
+            document.getElementById('documento').value = usuario.documento;
+            document.getElementById('correo').value = usuario.correo;
+
+
+            const generoElements = document.getElementsByName('genero');
+            for (let i = 0; i < generoElements.length; i++) {
+                if (generoElements[i].value === usuario.genero) {
+                    generoElements[i].checked = true;
+                    break;
+                }
+            }
+
+
+            formularioTitulo.textContent = "Editar Usuario";
+
+
+            btnRegistrar.classList.add('d-none');
+            btnActualizar.classList.remove('d-none');
+            btnCancelarEdicion.classList.remove('d-none');
+
+
+            miModal.style.display = "block";
+        }
+
+
+        function cancelarEdicion() {
+
+            formularioRegistro.reset();
+
+            // Restablecer el índice del usuario
+            usuarioIndexInput.value = "-1";
+
+
+            formularioTitulo.textContent = "Formulario de Registro";
+
+
+            btnRegistrar.classList.remove('d-none');
+            btnActualizar.classList.add('d-none');
+            btnCancelarEdicion.classList.add('d-none');
+
+
+            miModal.style.display = "none";
+        }
+
+
+        function actualizarUsuario(index) {
+
+
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const ciudad = document.getElementById('ciudad').value.trim();
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
+            const documento = document.getElementById('documento').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const generoElements = document.getElementsByName('genero');
+            let genero = '';
+
+            for (let i = 0; i < generoElements.length; i++) {
+                if (generoElements[i].checked) {
+                    genero = generoElements[i].value;
+                    break;
+                }
+            }
+
+
+            usuarios[index] = {
+                nombre,
+                apellido,
+                telefono,
+                direccion,
+                ciudad,
+                tipoDocumento,
+                documento,
+                correo,
+                genero,
+                fechaRegistro: usuarios[index].fechaRegistro
+            };
+
+
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+
+            actualizarTabla();
+
+
+            alertaExito.textContent = "¡Usuario actualizado con éxito!";
+            alertaExito.classList.remove('d-none');
+
+
+            setTimeout(() => {
+                alertaExito.classList.add('d-none');
+            }, 3000);
+
+            // Cancelar (limpiar formulario y cerrar modal)
+            cancelarEdicion();
+        }
+
+        function mostrarModalConfirmacion(index) {
+            if (index === -1) {
+                //  eliminar todos los usuarios
+                modalConfirmarTitulo.textContent = "Confirmar eliminación";
+                modalConfirmarMensaje.textContent = "¿Estás seguro de que quieres eliminar todos los registros?";
+            } else {
+                //  eliminar un usuario específico
+                const usuario = usuarios[index];
+                modalConfirmarTitulo.textContent = "Confirmar eliminación de usuario";
+                modalConfirmarMensaje.textContent = `¿Estás seguro de que quieres eliminar al usuario ${usuario.nombre} ${usuario.apellido}?`;
+            }
+
+            btnConfirmarEliminar.dataset.index = index;
+            modalConfirmar.style.display = "block";
+        }
+
+
+        btnEliminarTodos.addEventListener('click', function () {
+            mostrarModalConfirmacion(-1);
+        });
+
+        //  confirmación de eliminación
+        btnConfirmarEliminar.addEventListener('click', function () {
+            const index = parseInt(this.dataset.index);
+
+            if (index === -1) {
+                // Eliminar todos los usuarios
+                usuarios = [];
+            } else {
+                // Eliminar solo el usuario seleccionado
+                usuarios.splice(index, 1);
+            }
+
+            // Guardar en localStorage y actualizar tabla
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            actualizarTabla();
+
+
+            modalConfirmar.style.display = "none";
+        });
+
+
+        btnCancelar.addEventListener('click', function () {
+            modalConfirmar.style.display = "none";
+        });
+
+
+        modalCerrar.addEventListener('click', function () {
+            modalConfirmar.style.display = "none";
+        });
+
+
+        window.addEventListener('click', function (event) {
+            if (event.target == modalConfirmar) {
+                modalConfirmar.style.display = "none";
+            }
+        });
+
+
+        abrirModalBtn.addEventListener("click", function () {
+
+            formularioTitulo.textContent = "Formulario de Registro";
+            btnRegistrar.classList.remove('d-none');
+            btnActualizar.classList.add('d-none');
+            btnCancelarEdicion.classList.add('d-none');
+            formularioRegistro.reset();
+            usuarioIndexInput.value = "-1";
+
+            miModal.style.display = "block";
+        });
+
+
+        cerrarBtn.addEventListener("click", function () {
+            miModal.style.display = "none";
+        });
+
+
+        window.addEventListener("click", function (event) {
+            if (event.target === miModal) {
+                miModal.style.display = "none";
+            }
+        });
+
+
+        function mostrarAlerta(id, mostrar) {
+            const alerta = document.getElementById(id);
+            if (mostrar) {
+                alerta.classList.remove('d-none');
+            } else {
+                alerta.classList.add('d-none');
+            }
+        }
+
+        // Validación y envío del formulario
+        formularioRegistro.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Ocultar todas las alertas
+            document.querySelectorAll('.alerta').forEach(alerta => {
+                alerta.classList.add('d-none');
+            });
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const ciudad = document.getElementById('ciudad').value.trim();
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
+            const documento = document.getElementById('documento').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const contrasena = document.getElementById('contrasena').value;
+            const tiempo = document.getElementById('tiempo').value;
+            const generoElements = document.getElementsByName('genero');
+            let genero = '';
+
+            for (let i = 0; i < generoElements.length; i++) {
+                if (generoElements[i].checked) {
+                    genero = generoElements[i].value;
+                    break;
+                }
+            }
+
+
+            let isValid = true;
+
+            if (!nombre) {
+                mostrarAlerta('alertNombre', true);
+                isValid = false;
+            }
+
+            if (!apellido) {
+                mostrarAlerta('alertApellido', true);
+                isValid = false;
+            }
+
+            if (!telefono) {
+                mostrarAlerta('alertTelefono', true);
+                isValid = false;
+            }
+
+            if (!direccion) {
+                mostrarAlerta('alertDireccion', true);
+                isValid = false;
+            }
+
+            if (!ciudad) {
+                mostrarAlerta('alertCiudad', true);
+                isValid = false;
+            }
+
+            if (!tipoDocumento) {
+                mostrarAlerta('alertTipoDoc', true);
+                isValid = false;
+            }
+
+            if (!documento) {
+                mostrarAlerta('alertDocumento', true);
+                isValid = false;
+            }
+
+            if (!correo) {
+                mostrarAlerta('alertCorreo', true);
+                isValid = false;
+            }
+
+            if (!contrasena) {
+                mostrarAlerta('alertContrasena', true);
+                isValid = false;
+            }
+
+            if (!tiempo) {
+                mostrarAlerta('alertTiempo', true);
+                isValid = false;
+            }
+
+            if (!genero) {
+                mostrarAlerta('alertGenero', true);
+                isValid = false;
+            }
+
+            if (isValid) {
+                const index = parseInt(usuarioIndexInput.value);
+
+                if (index >= 0) {
+
+                    actualizarUsuario(index);
+                } else {
+
+                    const nuevoUsuario = {
+                        nombre,
+                        apellido,
+                        telefono,
+                        direccion,
+                        ciudad,
+                        tipoDocumento,
+                        documento,
+                        correo,
+                        genero,
+                        fechaRegistro: new Date().toISOString()
+                    };
+
+                    usuarios.push(nuevoUsuario);
+
+                    // Guardar en localStorage
+                    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+
+                    actualizarTabla();
+
+
+                    alertaExito.textContent = "¡Usuario registrado con éxito!";
+                    alertaExito.classList.remove('d-none');
+
+
+                    formularioRegistro.reset();
+
+                    // Ocultar mensaje de éxito después de 3 segundos
+                    setTimeout(() => {
+                        alertaExito.classList.add('d-none');
+                    }, 3000);
+                }
+            }
+        });
+
+
+        btnActualizar.addEventListener('click', function () {
+            const index = parseInt(usuarioIndexInput.value);
+            if (index >= 0) {
+                formularioRegistro.dispatchEvent(new Event('submit'));
+            }
+        });
+
+
+        btnCancelarEdicion.addEventListener('click', cancelarEdicion);
+
+
+        actualizarTabla();
+    </script>
 </body>
 
 </html>
