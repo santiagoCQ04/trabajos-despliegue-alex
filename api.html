@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Card</title>
+</head>
+
+<body>
+    <div class="carta">
+        <div class="lado-izquierdo">
+            <h1 id="nombre"></h1>
+            <h2>ID: <span id="id"></span></h2>
+            <div class="imagen-container">
+                <img src="" alt="" id="imagen">
+                <img src="" alt="" id="imagen2">
+            </div>
+            <div id="tipoContainer">
+                <h2>Tipo:</h2>
+                <div id="tipoBtn"></div>
+            </div>
+            <div class="stats-container">
+                <h2 id="altura"></h2>
+                <h2 id="peso"></h2>
+            </div>
+        </div>
+        <div class="lado-derecho">
+            <div id="habilidadesContainer">
+                <h2>Habilidades:</h2>
+                <div id="habilidadesList"></div>
+            </div>
+            <div id="debilidadesContainer">
+                <h2>Debilidades:</h2>
+                <div id="debilidadesList"></div>
+            </div>
+            <div id="estadisticas"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const pokemonId = aleatorio();
+            const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+            const namecolor=await axios.get(`https://pokeapi.co/api/v2/pokemon-species/${res.data.id}/`)
+            console.log(res);
+            
+            document.getElementById("nombre").textContent = res.data.name;
+            document.getElementById("id").textContent = `#${res.data.id}`; 
+            document.getElementById("altura").textContent = `Altura: ${res.data.height/10} m`;
+            document.getElementById("peso").textContent = `Peso: ${res.data.weight/10} Kg`;
+            document.getElementById("imagen").src = res.data.sprites.other.showdown.back_default;
+            document.getElementById("imagen2").src = res.data.sprites.other.showdown.front_default;
+        
+           
+            const tipoBtn = document.getElementById("tipoBtn");
+            tipoBtn.innerHTML = ""; 
+            
+            const pokemonTypes = [];
+            
+         
+            res.data.types.forEach(typeInfo => {
+                const tipo = typeInfo.type.name;
+                pokemonTypes.push(tipo);
+                const boton = document.createElement("button");
+                boton.textContent = tipo;
+                boton.className = `tipo-btn ${tipo}`;
+                tipoBtn.appendChild(boton);
+            });
+          
+            const carta = document.querySelector('.carta');
+            if (pokemonTypes.length === 1) {
+                // Si solo hay un tipo
+                carta.style.background = `var(--${pokemonTypes[0]}-color)`;
+            } else if (pokemonTypes.length === 2) {
+                // Si hay dos tipos, crear degradado suave
+                carta.style.background = `linear-gradient(45deg, 
+                    var(--${pokemonTypes[0]}-color) 0%, 
+                    var(--${pokemonTypes[1]}-color) 100%)`;
+            }
+            
+          
+            const habilidadesList = document.getElementById("habilidadesList");
+            habilidadesList.innerHTML = "";
+            
+            res.data.abilities.forEach(abilityInfo => {
+                const habilidad = abilityInfo.ability.name;
+                const boton = document.createElement("button");
+                boton.textContent = habilidad;
+                boton.className = "tipo-btn";
+                
+                if (abilityInfo.is_hidden) {
+                    boton.textContent += " (oculta)";
+                    boton.style.backgroundColor = "#A040A0"; // habilidades ocultas
+                } else {
+                    boton.style.backgroundColor = "#78C850"; //  habilidades normales
+                }
+                
+                habilidadesList.appendChild(boton);
+            });
+            
+            const debilidadesList = document.getElementById("debilidadesList");
+            debilidadesList.innerHTML = ""; 
+            
+            //   debilidades 
+            const fetchTypeData = async (type) => {
+                try {
+                    const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`);
+                    return response.data.damage_relations;
+                } catch (error) {
+                    console.error(`Error obteniendo datos del tipo ${type}:`, error);
+                    return null;
+                }
+            };
+        
+            const calculateWeaknesses = async () => {
+                const typeDataPromises = pokemonTypes.map(type => fetchTypeData(type));
+                const typeDataResults = await Promise.all(typeDataPromises);
+                
+                // Recopilar todas las relaciones de daño
+                const weaknessMap = {};
+                const resistanceMap = {};
+                const immunityTypes = new Set();
+                
+                typeDataResults.forEach(typeData => {
+                    if (!typeData) return;
+                    
+                    // Inmunidades
+                    typeData.no_damage_from.forEach(immunity => {
+                        immunityTypes.add(immunity.name);
+                    });
+                    
+                    // Resistencias 
+                    typeData.half_damage_from.forEach(resistance => {
+                        resistanceMap[resistance.name] = (resistanceMap[resistance.name] || 0) + 1;
+                    });
+                    
+                    // Debilidades
+                    typeData.double_damage_from.forEach(weakness => {
+                        weaknessMap[weakness.name] = (weaknessMap[weakness.name] || 0) + 1;
+                    });
+                });
+             
+            const estadisticas = document.getElementById("estadisticas");
+            estadisticas.innerHTML = "<h2>Estadisticas:</h2>"; 
+
+            res.data.stats.forEach(stat => {
+                const statDiv = document.createElement("div");
+                statDiv.style.marginBottom = "10px";
+                statDiv.style.textAlign = "left";
+                statDiv.style.width = "90%";
+                statDiv.style.margin = "5px auto";
+
+                const label = document.createElement("div");
+                label.textContent = `${stat.stat.name.charAt(0).toUpperCase() + stat.stat.name.slice(1)}: ${stat.base_stat}`;
+                label.style.color = "white";
+                label.style.marginBottom = "5px";
+                statDiv.appendChild(label);
+
+                const barraProgreso = document.createElement("div");
+                barraProgreso.classList.add("barra-progreso");
+                
+                const barra = document.createElement("div");
+                barra.classList.add("barra");
+                
+                // Usar el color del pokémon para las barras
+                const pokemonColor = namecolor.data.color.name;
+                barra.style.width = `${(stat.base_stat / 255) * 100}%`;
+                
+                
+                if (stat.base_stat >= 150) {
+                    barra.style.backgroundColor = "#4CAF50";
+                } else if (stat.base_stat >= 90) {
+                    barra.style.backgroundColor = "#2196F3"; 
+                } else if (stat.base_stat >= 50) {
+                    barra.style.backgroundColor = "#FFC107"; 
+                } else {
+                    barra.style.backgroundColor = "#f44336"; 
+                }
+
+                barraProgreso.appendChild(barra);
+                statDiv.appendChild(barraProgreso);
+                estadisticas.appendChild(statDiv);
+            });
+                
+                const finalWeaknesses = [];
+                
+                for (const [type, count] of Object.entries(weaknessMap)) {
+                    // Si es inmune, no es una debilidad
+                    if (immunityTypes.has(type)) {
+                        continue;
+                    }
+                    
+                    // Calcular el factor de daño final
+                    const resistCount = resistanceMap[type] || 0;
+                    const factor = Math.pow(2, count) / Math.pow(2, resistCount);
+                    
+                 
+                    if (factor > 1) {
+                        finalWeaknesses.push({ type, factor });
+                    }
+                }
+                
+                // Ordenar por factor de debilidad (más alto primero)
+                finalWeaknesses.sort((a, b) => b.factor - a.factor);
+                
+           
+                finalWeaknesses.forEach(weakness => {
+                    const boton = document.createElement("button");
+                    boton.textContent = weakness.type;
+                    if (weakness.factor >= 4) {
+                        boton.textContent += " (x4)";
+                        boton.className = `tipo-btn ${weakness.type} super-weak`;
+                    } else if (weakness.factor >= 2) {
+                        boton.textContent += " (x2)";
+                        boton.className = `tipo-btn ${weakness.type}`;
+                    }
+                    debilidadesList.appendChild(boton);
+                });
+                
+               
+                if (finalWeaknesses.length === 0) {
+                    const noWeaknesses = document.createElement("div");
+                    noWeaknesses.textContent = "¡Sin debilidades!";
+                    noWeaknesses.className = "no-weakness";
+                    debilidadesList.appendChild(noWeaknesses);
+                }
+            };
+            calculateWeaknesses();
+        });
+        
+        function aleatorio() {
+            const numero = Math.floor(Math.random() * 300) + 1;
+            return numero;
+        }
+    </script>
+    <style>
+        :root {
+            --normal-color: #A8A878;
+            --fire-color: #F08030;
+            --water-color: #6890F0;
+            --grass-color: #78C850;
+            --electric-color: #F8D030;
+            --ice-color: #98D8D8;
+            --fighting-color: #C03028;
+            --poison-color: #A040A0;
+            --ground-color: #E0C068;
+            --flying-color: #A890F0;
+            --psychic-color: #F85888;
+            --bug-color: #A8B820;
+            --rock-color: #B8A038;
+            --ghost-color: #705898;
+            --dragon-color: #7038F8;
+            --dark-color: #705848;
+            --steel-color: #B8B8D0;
+            --fairy-color: #EE99AC;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('https://assets.pokemon.com//assets/cms2-es-es/img/misc/virtual-backgrounds/sword-shield/pokemon-in-the-wild.png');
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: cover;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .carta {
+            display: grid;
+            grid-template-columns: 45% 55%;
+            width: 70%;
+            max-width: 1200px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border: 2px solid rgb(97, 247, 247);
+            animation: borderContenedor 0.9s linear infinite;
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            gap: 15px;
+            transition: background-color 0.3s ease;
+            transition: all 0.5s ease;
+            background-size: 200% 200%;
+            transition: background 0.5s ease;
+            background-size: 150% 150%;
+            backdrop-filter: blur(5px);
+        }
+
+        .lado-izquierdo {
+            padding-right: 20px;
+            border-right: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .lado-izquierdo img {
+            width: 200px;
+            max-height: 150px;
+            object-fit: contain;
+        }
+
+        .imagen-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .lado-derecho {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #nombre, #id {
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .imagen-container {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .carta h1 {
+            color: rgb(9, 36, 0);
+            font-size: 32px;
+            text-align: center;
+            margin-top: 10px;
+            text-transform: capitalize;
+        }
+        
+        .carta h2 {
+            color: rgb(9, 36, 0);
+            font-size: 30px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        @keyframes borderContenedor {
+            0% {
+                box-shadow: 0px 0px 10px rgb(9, 36, 0);
+            }
+            50% {
+                box-shadow: 0px 0px 20px rgb(9, 36, 0);
+            }
+            100% {
+                box-shadow: 0px 0px 10px rgb(5, 218, 218);
+            }
+        }
+        
+         #habilidadesContainer, #debilidadesContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 5px 0;
+            width: 100%;
+        }
+        
+         #debilidadesList {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        #tipoBtn{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            border:1px solid black;
+            border-radius: 5px;
+        }
+        #habilidadesList{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+        }
+        #tipoContainer{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+            width: 100%;
+        }
+
+        #tipoContainer h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .tipo-btn {
+            margin: 2px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        
+        .habilidad-item {
+            padding: 8px 16px;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            margin: 5px 0;
+            font-size: 18px;
+            text-transform: capitalize;
+            width: 80%;
+            text-align: center;
+        }
+        
+        .habilidad-oculta {
+            background-color: #e0e0e0;
+            font-style: italic;
+        }
+        
+        .super-weak {
+            box-shadow: 0 0 10px red;
+        }
+        
+        .no-weakness {
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+            margin: 10px 0;
+        }
+        
+        .normal { background-color: #A8A878; }
+        .fire { background-color: #F08030; }
+        .water { background-color: #6890F0; }
+        .grass { background-color: #78C850; }
+        .electric { background-color: #F8D030; }
+        .ice { background-color: #98D8D8; }
+        .fighting { background-color: #C03028; }
+        .poison { background-color: #A040A0; }
+        .ground { background-color: #E0C068; }
+        .flying { background-color: #A890F0; }
+        .psychic { background-color: #F85888; }
+        .bug { background-color: #A8B820; }
+        .rock { background-color: #B8A038; }
+        .ghost { background-color: #705898; }
+        .dragon { background-color: #7038F8; }
+        .dark { background-color: #705848; }
+        .steel { background-color: #B8B8D0; }
+        .fairy { background-color: #EE99AC; }
+        
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+            gap: 5px;
+        }
+
+        .stats-container h2 {
+            margin: 0;
+            color: rgb(9, 36, 0);
+            font-size: 18px;
+        }
+
+        .barra-progreso {
+            width: 100%;
+            height: 15px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 5px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .barra {
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.8s ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        #estadisticas {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #estadisticas h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .carta h1, .carta h2, #estadisticas h2, .stats-container h2 {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 600px) {
+            .carta {
+                grid-template-columns: 1fr;
+                width: 90%;
+            }
+
+            .lado-izquierdo {
+                padding-right: 0;
+                border-right: none;
+            }
+
+            .lado-derecho {
+                padding-left: 0;
+            }
+
+            .imagen-container {
+                flex-direction: row;
+                gap: 10px;
+            }
+        }
+        @media (min-width: 601px) and (max-width: 1024px) {
+            .carta {
+                grid-template-columns: 1fr 1fr;
+                width: 80%;
+            }
+
+            .lado-izquierdo {
+                padding-right: 0;
+                border-right: none;
+            }
+
+            .lado-derecho {
+                padding-left: 0;
+            }
+
+            .imagen-container {
+                flex-direction: row;
+                gap: 10px;
+            }
+            
+        }
+        @media (min-width: 1025px) {
+            .carta {
+                grid-template-columns: 1fr 1fr;
+                width: 70%;
+            }
+
+            .lado-izquierdo {
+                padding-right: 0;
+                border-right: none;
+            }
+
+            .lado-derecho {
+                padding-left: 0;
+            }
+
+            .imagen-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</body>
+
+</html>

@@ -1,349 +1,1074 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formulario</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background-repeat: no-repeat;
-            background-position: center;
-            background-image: url('https://content.skyscnr.com/m/3eff5b3d743d48bb/original/GettyImages-486348592.jpg?resize=1800px:1800px&quality=100');
-
-    }
-    .form-container {
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      background-clip: text;
-      animation: borderContenedor 0.9s linear infinite;
-    }
-    @keyframes borderContenedor {
-        0% {
-            box-shadow: 0px 0px 10px rgb(9, 36, 0);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Fondo Animado con Perritos</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
         }
 
-        50% {
-            box-shadow: 0px 0px 20px rgb(9, 36, 0);
-        }
-
-        100% {
-            box-shadow: 0px 0px 10px rgb(133, 224, 240);
-        }
-    }
-    .form-container h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: rgb(0, 0, 0);
-    }
-    .alerta {
-      font-size: 0.9em;
-      margin-top: 5px;
-    }
-    .mb-3 {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 20px;
-            margin-top: 20px;
+        .fondo-contenedor {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            color: aliceblue;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .fondo-imagen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            transform-origin: center center;
+            image-rendering: -webkit-optimize-contrast;
+            /* Para Chrome/Safari */
+            image-rendering: crisp-edges;
+            /* Para Firefox */
+            -ms-interpolation-mode: nearest-neighbor;
+            /* Para IE */
+            transition: opacity 1.5s ease-in-out;
+            will-change: transform, opacity;
+        }
+
+        #imagen1 {
+            background-image: url('https://petia.es/wp-content/uploads/2024/11/cambio_gatos.jpg');
+            animation: zoom1 8s infinite;
+        }
+
+        #imagen2 {
+            background-image: url('https://cdn.prod.website-files.com/63634f4a7b868a399577cf37/63e10bf28752f848463155b3_razas%20de%20gatos.jpg');
+            animation: zoom2 8s infinite;
+        }
+
+        #imagen3 {
+            background-image: url('https://media.es.wired.com/photos/657cb5b81e17b099f8f9e15c/3:2/w_3009,h_2006,c_limit/gatos%20172050389.jpg');
+            animation: zoom3 8s infinite;
+        }
+
+        #imagen4 {
+            background-image: url('https://cdn.prod.website-files.com/63634f4a7b868a399577cf37/63e10adfa64a34de9592b9a3_nombres%20para%20perritos%20blancos.jpg');
+            animation: zoom4 8s infinite;
+        }
+
+        @keyframes zoom1 {
+
+            0%,
+            20% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            25%,
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoom2 {
+
+            0%,
+            20% {
+                transform: scale(1.0);
+                opacity: 0;
+            }
+
+            25%,
+            45% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            50%,
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoom3 {
+
+            0%,
+            45% {
+                transform: scale(1.0);
+                opacity: 0;
+            }
+
+            50%,
+            70% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            75%,
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        @keyframes zoom4 {
+
+            0%,
+            70% {
+                transform: scale(1.0);
+                opacity: 0;
+            }
+
+            75%,
+            95% {
+                transform: scale(1.0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        .tabla-contenedor {
+            max-width: 90%;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .tabla-contenedor h2 {
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #000000;
+
+        }
+
+        .tabla-responsive {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .tabla {
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 100%;
+        }
+
+        .tabla thead th {
+            position: sticky;
+            top: 0;
+            background-color: #c3e0fd;
+            z-index: 1;
+        }
+
+        .tabla tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        .grupo-botones {
+            margin-bottom: 20px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .tabla-responsive::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        h2 {
+            display: flex;
+            justify-content: center;
+        }
+
+        .mb-3 {
+            color: #f1f1f1;
             font-size: 20px;
         }
 
-        .mb-3 span {
-            font-weight: bold;
+        .modal-contenido {
+            background-image: url('https://content.skyscnr.com/m/3eff5b3d743d48bb/original/GettyImages-486348592.jpg?resize=1800px:1800px&quality=100');
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
         }
 
-        .mb-3 label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+
+        #modalConfirmar {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
         }
-        .imagen {
+
+        .modal-confirmar-contenido {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 0;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            max-width: 80%;
+            position: relative;
+        }
+
+        .modal-encabezado {
+            background-color: #dc3545;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            position: relative;
+        }
+
+        .modal-encabezado h5 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .modal-cerrar {
+            color: white;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-cuerpo {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .modal-pie {
+            padding: 15px 20px;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-secundario {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-peligro {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-secundario:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-peligro:hover {
+            background-color: #c82333;
+        }
+
+        .cerrar {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .formulario-contenedor {
+            padding: 20px;
+        }
+
+        .imagen {
+            text-align: center;
             margin-bottom: 20px;
         }
 
         .imagen img {
-            border: 1px solid black;
-            border-radius: 50%;
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            box-sizing: border-box;
-        }
-    @media (max-width: 600px) {
-      .form-container {
-        width: 90%;
-        padding: 20px;
-        margin: 20px auto;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-
-      .form-container h2 {
-        font-size: 18px;
-      }
-
-      .imagen img {
-        width: 100px;
-        height: 100px;
-      }
-
-      .form-control,
-      .form-select {
-        font-size: 14px;
-        padding: 8px;
-      }
-
-      .btn {
-        font-size: 14px;
-        padding: 10px;
-      }
-
-      .mb-3 {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      .mb-3 label {
-        gap: 5px;
-      }
-    }
-    @media (min-width: 601px) and (max-width: 1024px) {
-        .form-container {
-            width: 70%;
-            padding: 25px;
-            margin: 30px auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            width: 80px;
+            height: 80px;
         }
 
-        .form-container h2 {
-            font-size: 20px;
+        #abrirModalBtn,
+        #btnEliminarTodos {
+            height: 50px;
         }
 
-        .imagen img {
-            width: 120px;
-            height: 120px;
+        #abrirModalBtn:hover {
+            background-color: #0056b3;
         }
 
-        .form-control,
-        .form-select {
-            font-size: 16px;
-            padding: 10px;
+        .alerta {
+            margin-top: 5px;
+            padding: 5px;
+            font-size: 14px;
         }
 
-        .btn {
-            font-size: 16px;
-            padding: 12px;
+        .accion-botones {
+            display: flex;
+            gap: 5px;
         }
 
-        .mb-3 {
-            flex-direction: row;
-            align-items: center;
-            gap: 15px;
+        .btn-eliminar {
+            padding: 4px 8px;
+            font-size: 14px;
         }
 
-        .mb-3 label {
-            gap: 8px;
-        }
-    }
-    @media (min-width: 1025px) {
-        .form-container {
-            width: 50%;
-            padding: 30px;
-            margin: 50px auto;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        .btn-actualizar {
+            padding: 4px 8px;
+            font-size: 14px;
+            background-color: #ffc107;
+            border-color: #ffc107;
         }
 
-        .form-container h2 {
-            font-size: 24px;
-            margin-bottom: 30px;
+        .btn-actualizar:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
         }
 
-        .imagen img {
-            width: 180px;
-            height: 180px;
+        @media (max-width: 600px) {
+            .tabla-contenedor {
+                width: 95%;
+                padding: 20px;
+                margin: 20px auto;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .tabla-contenedor h2 {
+                font-size: 18px;
+            }
+
+            .tabla-responsive {
+                font-size: 12px;
+            }
+
+            .tabla-contenedor {
+                padding: 15px 10px;
+            }
+
+            .tabla th,
+            .tabla td {
+                padding: 8px 5px;
+                font-size: 12px;
+            }
+
+            .modal-contenido {
+                width: 95%;
+                margin: 5% auto;
+            }
         }
 
-        .form-control,
-        .form-select {
-            font-size: 18px;
-            padding: 12px;
+        @media (min-width: 601px) and (max-width: 1024px) {
+            .tabla-contenedor {
+                width: 85%;
+                padding: 25px;
+                margin: 30px auto;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            }
+
+            .tabla-contenedor h2 {
+                font-size: 20px;
+            }
+
+            .tabla th,
+            .tabla td {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
         }
 
-        .btn {
-            font-size: 18px;
-            padding: 15px;
-        }
+        @media (min-width: 1025px) {
+            .tabla-contenedor {
+                width: 80%;
+                padding: 30px;
+                margin: 50px auto;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            }
 
-        .mb-3 {
-            flex-direction: row;
-            align-items: center;
-            gap: 20px;
-        }
+            .tabla-contenedor h2 {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
 
-        .mb-3 label {
-            gap: 10px;
+            .tabla th,
+            .tabla td {
+                padding: 12px;
+                font-size: 16px;
+            }
         }
-    }
-  </style>
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="form-container">
-      <h2>Formulario de Registro</h2>
-      <div class="imagen">
-        <img src="data:image/jpeg;base64,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" alt="">
+    <div class="fondo-contenedor">
+        <div id="imagen1" class="fondo-imagen"></div>
+        <div id="imagen2" class="fondo-imagen"></div>
+        <div id="imagen3" class="fondo-imagen"></div>
+        <div id="imagen4" class="fondo-imagen"></div>
     </div>
-     
-      <div id="alertaExito" class="alert alert-success d-none" role="alert">
-        ¡Usuario registrado con éxito!
-      </div>
+    <div class="contenedor">
+        <div class="tabla-contenedor">
+            <h2 class="texto-centro mb-4">Usuarios Registrados</h2>
 
-      <form id="formulario" novalidate>
-        <div class="mb-2">
-          <input type="text" id="nombre" class="form-control" placeholder="Nombre">
-          <div class="alert alert-danger d-none alerta" id="alertNombre">El nombre es obligatorio.</div>
+            <div class="grupo-botones mb-3 w-50">
+                <button id="abrirModalBtn" class="btn btn-primary w-50">Abrir Formulario</button>
+                <button id="btnEliminarTodos" class="btn btn-danger w-50">Eliminar Todos</button>
+            </div>
+
+            <div class="tabla-responsive">
+                <table class="tabla table-striped table-hover" id="tablaUsuarios">
+                    <thead class="tabla-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellido</th>
+                            <th scope="col">Documento</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Teléfono</th>
+                            <th scope="col">Ciudad</th>
+                            <th scope="col">Género</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyUsuarios">
+                        <!-- Los usuarios se agregarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-        <div class="mb-2">
-          <input type="text" id="apellido" class="form-control" placeholder="Apellido">
-          <div class="alert alert-danger d-none alerta" id="alertApellido">El apellido es obligatorio.</div>
-        </div>
-
-        <div class="mb-2">
-          <input type="text" id="telefono" class="form-control" placeholder="Teléfono">
-          <div class="alert alert-danger d-none alerta" id="alertTelefono">El teléfono es obligatorio.</div>
-        </div>
-
-        <div class="mb-2">
-          <input type="text" id="direccion" class="form-control" placeholder="Dirección">
-          <div class="alert alert-danger d-none alerta" id="alertDireccion">La dirección es obligatoria.</div>
-        </div>
-
-        <div class="mb-2">
-          <input type="text" id="ciudad" class="form-control" placeholder="Ciudad">
-          <div class="alert alert-danger d-none alerta" id="alertCiudad">La ciudad es obligatoria.</div>
-        </div>
-
-        <div class="mb-2">
-          <select id="tipoDocumento" class="form-select">
-            <option value="" disabled selected>Tipo de documento</option>
-            <option value="CC">Cédula de Ciudadanía</option>
-            <option value="TI">Tarjeta de Identidad</option>
-            <option value="CE">Cédula de Extranjería</option>
-            <option value="NIT">NIT</option>
-          </select>
-          <div class="alert alert-danger d-none alerta" id="alertTipoDoc">Seleccione un tipo de documento.</div>
-        </div>
-
-        <div class="mb-2">
-          <input type="number" id="documento" class="form-control" placeholder="Documento">
-          <div class="alert alert-danger d-none alerta" id="alertDocumento">El número de documento es obligatorio.</div>
-        </div>
-
-        <div class="mb-2">
-          <input type="email" id="correo" class="form-control" placeholder="Correo electrónico">
-          <div class="alert alert-danger d-none alerta" id="alertCorreo">El correo es obligatorio.</div>
-        </div>
-
-        <div class="mb-2">
-          <input type="password" id="contrasena" class="form-control" placeholder="Contraseña">
-          <div class="alert alert-danger d-none alerta" id="alertContrasena">La contraseña es obligatoria.</div>
-        </div>
-
-        <div class="mb-2">
-          <input type="datetime-local" id="tiempo" class="form-control">
-          <div class="alert alert-danger d-none alerta" id="alertTiempo">La fecha de nacimiento es obligatoria.</div>
-        </div>
-
-        <div class="mb-3">
-          <span>Género:</span><br>
-          <label class="me-2"><input type="radio" name="genero" value="Masculino"> Masculino</label>
-          <label><input type="radio" name="genero" value="Femenino"> Femenino</label>
-          <div class="alert alert-danger d-none alerta" id="alertGenero">Seleccione un género.</div>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Registrar</button>
-      </form>
     </div>
-  </div>
 
-  <script>
-    const formulario = document.getElementById("formulario");
-    const alertaExito = document.getElementById("alertaExito");
+    <!-- Modal de confirmación para eliminar todos los registros -->
+    <div id="modalConfirmar">
+        <div class="modal-confirmar-contenido">
+            <div class="modal-encabezado">
+                <h5 id="modalConfirmarTitulo">Confirmar eliminación</h5>
+                <span class="modal-cerrar">&times;</span>
+            </div>
+            <div class="modal-cuerpo">
+                <p id="modalConfirmarMensaje">¿Estás seguro de que quieres eliminar todos los registros?</p>
+            </div>
+            <div class="modal-pie">
+                <button class="btn-secundario" id="btnCancelar">Cancelar</button>
+                <button class="btn-peligro" id="btnConfirmarEliminar" data-index="-1">Eliminar</button>
+            </div>
+        </div>
+    </div>
 
-    const usuarios = [];
+    <div id="miModal" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <div class="formulario-contenedor">
+                <h2 id="formularioTitulo">Formulario de Registro</h2>
+                <div class="imagen">
+                    <img src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.5.0/collection/components/icon/svg/person-circle-outline.svg"
+                        alt="Perfil">
+                </div>
 
-    formulario.addEventListener("submit", function (e) {
-      e.preventDefault();
+                <div id="alertaExito" class="alert alert-success d-none" role="alert">
+                    ¡Usuario registrado con éxito!
+                </div>
 
-      // Obtener valores
-      const campos = {
-        nombre: document.getElementById("nombre"),
-        apellido: document.getElementById("apellido"),
-        telefono: document.getElementById("telefono"),
-        direccion: document.getElementById("direccion"),
-        ciudad: document.getElementById("ciudad"),
-        tipoDocumento: document.getElementById("tipoDocumento"),
-        documento: document.getElementById("documento"),
-        correo: document.getElementById("correo"),
-        contrasena: document.getElementById("contrasena"),
-        tiempo: document.getElementById("tiempo"),
-        genero: document.querySelector('input[name="genero"]:checked')
-      };
+                <form id="formularioRegistro">
+                    <!-- Campo oculto para almacenar el índice del usuario que se está editando -->
+                    <input type="hidden" id="usuarioIndex" value="-1">
 
-      let valido = true;
+                    <div class="mb-2">
+                        <input type="text" id="nombre" class="form-control" placeholder="Nombre">
+                        <div class="alert alert-danger d-none alerta" id="alertNombre">El nombre es obligatorio.</div>
+                    </div>
 
-      // Ocultar todas las alertas primero
-      Object.keys(campos).forEach(key => {
-        const alerta = document.getElementById(`alert${key.charAt(0).toUpperCase() + key.slice(1)}`);
-        if (alerta) alerta.classList.add("d-none");
-      });
+                    <div class="mb-2">
+                        <input type="text" id="apellido" class="form-control" placeholder="Apellido">
+                        <div class="alert alert-danger d-none alerta" id="alertApellido">El apellido es obligatorio.
+                        </div>
+                    </div>
 
-      // Validar campos vacíos
-      Object.entries(campos).forEach(([key, campo]) => {
-        const valor = campo?.value?.trim();
-        if (!valor) {
-          const alerta = document.getElementById(`alert${key.charAt(0).toUpperCase() + key.slice(1)}`);
-          if (alerta) alerta.classList.remove("d-none");
-          valido = false;
+                    <div class="mb-2">
+                        <input type="text" id="telefono" class="form-control" placeholder="Teléfono">
+                        <div class="alert alert-danger d-none alerta" id="alertTelefono">El teléfono es obligatorio.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="text" id="direccion" class="form-control" placeholder="Dirección">
+                        <div class="alert alert-danger d-none alerta" id="alertDireccion">La dirección es obligatoria.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="text" id="ciudad" class="form-control" placeholder="Ciudad">
+                        <div class="alert alert-danger d-none alerta" id="alertCiudad">La ciudad es obligatoria.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <select id="tipoDocumento" class="form-select">
+                            <option value="" disabled selected>Tipo de documento</option>
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="NIT">NIT</option>
+                        </select>
+                        <div class="alert alert-danger d-none alerta" id="alertTipoDoc">Seleccione un tipo de documento.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="number" id="documento" class="form-control" placeholder="Documento">
+                        <div class="alert alert-danger d-none alerta" id="alertDocumento">El número de documento es
+                            obligatorio.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="email" id="correo" class="form-control" placeholder="Correo electrónico">
+                        <div class="alert alert-danger d-none alerta" id="alertCorreo">El correo es obligatorio.</div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="password" id="contrasena" class="form-control" placeholder="Contraseña">
+                        <div class="alert alert-danger d-none alerta" id="alertContrasena">La contraseña es obligatoria.
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="datetime-local" id="tiempo" class="form-control">
+                        <div class="alert alert-danger d-none alerta" id="alertTiempo">La fecha de nacimiento es
+                            obligatoria.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <span>Género:</span>
+                        <label class="me-2"><input type="radio" name="genero" value="Masculino"> Masculino</label>
+                        <label><input type="radio" name="genero" value="Femenino"> Femenino</label>
+                        <div class="alert alert-danger d-none alerta" id="alertGenero">Seleccione un género.</div>
+                    </div>
+
+                    <button type="submit" id="btnRegistrar" class="btn btn-primary w-100">Registrar</button>
+                    <button type="button" id="btnActualizar"
+                        class="btn btn-warning w-100 mt-2 d-none">Actualizar</button>
+                    <button type="button" id="btnCancelarEdicion"
+                        class="btn btn-secondary w-100 mt-2 d-none">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tablaUsuarios = document.getElementById("tablaUsuarios");
+        const tbodyUsuarios = document.getElementById("tbodyUsuarios");
+        const btnEliminarTodos = document.getElementById("btnEliminarTodos");
+        const miModal = document.getElementById("miModal");
+        const abrirModalBtn = document.getElementById("abrirModalBtn");
+        const cerrarBtn = document.querySelector(".cerrar");
+        const formularioRegistro = document.getElementById("formularioRegistro");
+        const alertaExito = document.getElementById("alertaExito");
+        const formularioTitulo = document.getElementById("formularioTitulo");
+        const btnRegistrar = document.getElementById("btnRegistrar");
+        const btnActualizar = document.getElementById("btnActualizar");
+        const btnCancelarEdicion = document.getElementById("btnCancelarEdicion");
+        const usuarioIndexInput = document.getElementById("usuarioIndex");
+
+        const modalConfirmar = document.getElementById("modalConfirmar");
+        const btnCancelar = document.getElementById("btnCancelar");
+        const btnConfirmarEliminar = document.getElementById("btnConfirmarEliminar");
+        const modalCerrar = document.querySelector(".modal-cerrar");
+        const modalConfirmarTitulo = document.getElementById("modalConfirmarTitulo");
+        const modalConfirmarMensaje = document.getElementById("modalConfirmarMensaje");
+
+        let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+        function actualizarTabla() {
+
+            while (tbodyUsuarios.firstChild) {
+                tbodyUsuarios.removeChild(tbodyUsuarios.firstChild);
+            }
+
+
+            if (usuarios.length === 0) {
+                const fila = document.createElement("tr");
+                const celda = document.createElement("td");
+                celda.setAttribute("colspan", "9"); es
+                celda.className = "text-center";
+                celda.textContent = "No hay usuarios registrados";
+                fila.appendChild(celda);
+                tbodyUsuarios.appendChild(fila);
+                return;
+            }
+
+
+            usuarios.forEach((usuario, index) => {
+                const fila = document.createElement("tr");
+
+                // Crear celdas
+                const celdaIndex = document.createElement("td");
+                celdaIndex.textContent = index + 1;
+
+                const celdaNombre = document.createElement("td");
+                celdaNombre.textContent = usuario.nombre;
+
+                const celdaApellido = document.createElement("td");
+                celdaApellido.textContent = usuario.apellido;
+
+                const celdaDocumento = document.createElement("td");
+                celdaDocumento.textContent = `${usuario.tipoDocumento} ${usuario.documento}`;
+
+                const celdaCorreo = document.createElement("td");
+                celdaCorreo.textContent = usuario.correo;
+
+                const celdaTelefono = document.createElement("td");
+                celdaTelefono.textContent = usuario.telefono;
+
+                const celdaCiudad = document.createElement("td");
+                celdaCiudad.textContent = usuario.ciudad;
+
+                const celdaGenero = document.createElement("td");
+                celdaGenero.textContent = usuario.genero;
+
+                // Celda de acciones
+                const celdaAcciones = document.createElement("td");
+                celdaAcciones.className = "accion-botones";
+
+                const btnActualizar = document.createElement("button");
+                btnActualizar.className = "btn btn-warning btn-actualizar";
+                btnActualizar.textContent = "Actualizar";
+                btnActualizar.dataset.index = index;
+                btnActualizar.addEventListener('click', function () {
+                    cargarUsuarioParaEditar(index);
+                });
+
+                const btnEliminar = document.createElement("button");
+                btnEliminar.className = "btn btn-danger btn-eliminar";
+                btnEliminar.textContent = "Eliminar";
+                btnEliminar.dataset.index = index;
+                btnEliminar.addEventListener('click', function () {
+                    mostrarModalConfirmacion(index);
+                });
+
+
+                celdaAcciones.appendChild(btnActualizar);
+                celdaAcciones.appendChild(btnEliminar);
+
+
+                fila.appendChild(celdaIndex);
+                fila.appendChild(celdaNombre);
+                fila.appendChild(celdaApellido);
+                fila.appendChild(celdaDocumento);
+                fila.appendChild(celdaCorreo);
+                fila.appendChild(celdaTelefono);
+                fila.appendChild(celdaCiudad);
+                fila.appendChild(celdaGenero);
+                fila.appendChild(celdaAcciones);
+
+                tbodyUsuarios.appendChild(fila);
+            });
         }
-      });
 
-      if (!valido) return;
 
-      // Crear objeto y guardar
-      const usuario = {
-        nombre: campos.nombre.value.trim(),
-        apellido: campos.apellido.value.trim(),
-        telefono: campos.telefono.value.trim(),
-        direccion: campos.direccion.value.trim(),
-        ciudad: campos.ciudad.value.trim(),
-        tipoDocumento: campos.tipoDocumento.value.trim(),
-        documento: campos.documento.value.trim(),
-        correo: campos.correo.value.trim(),
-        contrasena: campos.contrasena.value,
-        tiempo: campos.tiempo.value.trim(),
-        genero: campos.genero.value,
-      };
+        function cargarUsuarioParaEditar(index) {
+            const usuario = usuarios[index];
 
-      usuarios.push(usuario);
-      console.log(usuarios);
 
-      // Mostrar alerta de éxito
-      alertaExito.classList.remove("d-none");
-      setTimeout(() => alertaExito.classList.add("d-none"), 3000);
+            usuarioIndexInput.value = index;
 
-      formulario.reset();
-    });
-  </script>
+
+            document.getElementById('nombre').value = usuario.nombre;
+            document.getElementById('apellido').value = usuario.apellido;
+            document.getElementById('telefono').value = usuario.telefono;
+            document.getElementById('direccion').value = usuario.direccion;
+            document.getElementById('ciudad').value = usuario.ciudad;
+            document.getElementById('tipoDocumento').value = usuario.tipoDocumento;
+            document.getElementById('documento').value = usuario.documento;
+            document.getElementById('correo').value = usuario.correo;
+
+
+            const generoElements = document.getElementsByName('genero');
+            for (let i = 0; i < generoElements.length; i++) {
+                if (generoElements[i].value === usuario.genero) {
+                    generoElements[i].checked = true;
+                    break;
+                }
+            }
+
+
+            formularioTitulo.textContent = "Editar Usuario";
+
+
+            btnRegistrar.classList.add('d-none');
+            btnActualizar.classList.remove('d-none');
+            btnCancelarEdicion.classList.remove('d-none');
+
+
+            miModal.style.display = "block";
+        }
+
+
+        function cancelarEdicion() {
+
+            formularioRegistro.reset();
+
+            // Restablecer el índice del usuario
+            usuarioIndexInput.value = "-1";
+
+
+            formularioTitulo.textContent = "Formulario de Registro";
+
+
+            btnRegistrar.classList.remove('d-none');
+            btnActualizar.classList.add('d-none');
+            btnCancelarEdicion.classList.add('d-none');
+
+
+            miModal.style.display = "none";
+        }
+
+
+        function actualizarUsuario(index) {
+
+
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const ciudad = document.getElementById('ciudad').value.trim();
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
+            const documento = document.getElementById('documento').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const generoElements = document.getElementsByName('genero');
+            let genero = '';
+
+            for (let i = 0; i < generoElements.length; i++) {
+                if (generoElements[i].checked) {
+                    genero = generoElements[i].value;
+                    break;
+                }
+            }
+
+
+            usuarios[index] = {
+                nombre,
+                apellido,
+                telefono,
+                direccion,
+                ciudad,
+                tipoDocumento,
+                documento,
+                correo,
+                genero,
+                fechaRegistro: usuarios[index].fechaRegistro
+            };
+
+
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+
+            actualizarTabla();
+
+
+            alertaExito.textContent = "¡Usuario actualizado con éxito!";
+            alertaExito.classList.remove('d-none');
+
+
+            setTimeout(() => {
+                alertaExito.classList.add('d-none');
+            }, 3000);
+
+            // Cancelar (limpiar formulario y cerrar modal)
+            cancelarEdicion();
+        }
+
+        function mostrarModalConfirmacion(index) {
+            if (index === -1) {
+                //  eliminar todos los usuarios
+                modalConfirmarTitulo.textContent = "Confirmar eliminación";
+                modalConfirmarMensaje.textContent = "¿Estás seguro de que quieres eliminar todos los registros?";
+            } else {
+                //  eliminar un usuario específico
+                const usuario = usuarios[index];
+                modalConfirmarTitulo.textContent = "Confirmar eliminación de usuario";
+                modalConfirmarMensaje.textContent = `¿Estás seguro de que quieres eliminar al usuario ${usuario.nombre} ${usuario.apellido}?`;
+            }
+
+            btnConfirmarEliminar.dataset.index = index;
+            modalConfirmar.style.display = "block";
+        }
+
+
+        btnEliminarTodos.addEventListener('click', function () {
+            mostrarModalConfirmacion(-1);
+        });
+
+        //  confirmación de eliminación
+        btnConfirmarEliminar.addEventListener('click', function () {
+            const index = parseInt(this.dataset.index);
+
+            if (index === -1) {
+                // Eliminar todos los usuarios
+                usuarios = [];
+            } else {
+                // Eliminar solo el usuario seleccionado
+                usuarios.splice(index, 1);
+            }
+
+            // Guardar en localStorage y actualizar tabla
+            localStorage.setItem('usuarios', JSON.stringify(usuarios));
+            actualizarTabla();
+
+
+            modalConfirmar.style.display = "none";
+        });
+
+
+        btnCancelar.addEventListener('click', function () {
+            modalConfirmar.style.display = "none";
+        });
+
+
+        modalCerrar.addEventListener('click', function () {
+            modalConfirmar.style.display = "none";
+        });
+
+
+        window.addEventListener('click', function (event) {
+            if (event.target == modalConfirmar) {
+                modalConfirmar.style.display = "none";
+            }
+        });
+
+
+        abrirModalBtn.addEventListener("click", function () {
+
+            formularioTitulo.textContent = "Formulario de Registro";
+            btnRegistrar.classList.remove('d-none');
+            btnActualizar.classList.add('d-none');
+            btnCancelarEdicion.classList.add('d-none');
+            formularioRegistro.reset();
+            usuarioIndexInput.value = "-1";
+
+            miModal.style.display = "block";
+        });
+
+
+        cerrarBtn.addEventListener("click", function () {
+            miModal.style.display = "none";
+        });
+
+
+        window.addEventListener("click", function (event) {
+            if (event.target === miModal) {
+                miModal.style.display = "none";
+            }
+        });
+
+
+        function mostrarAlerta(id, mostrar) {
+            const alerta = document.getElementById(id);
+            if (mostrar) {
+                alerta.classList.remove('d-none');
+            } else {
+                alerta.classList.add('d-none');
+            }
+        }
+
+        // Validación y envío del formulario
+        formularioRegistro.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Ocultar todas las alertas
+            document.querySelectorAll('.alerta').forEach(alerta => {
+                alerta.classList.add('d-none');
+            });
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellido = document.getElementById('apellido').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const direccion = document.getElementById('direccion').value.trim();
+            const ciudad = document.getElementById('ciudad').value.trim();
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
+            const documento = document.getElementById('documento').value.trim();
+            const correo = document.getElementById('correo').value.trim();
+            const contrasena = document.getElementById('contrasena').value;
+            const tiempo = document.getElementById('tiempo').value;
+            const generoElements = document.getElementsByName('genero');
+            let genero = '';
+
+            for (let i = 0; i < generoElements.length; i++) {
+                if (generoElements[i].checked) {
+                    genero = generoElements[i].value;
+                    break;
+                }
+            }
+
+
+            let isValid = true;
+
+            if (!nombre) {
+                mostrarAlerta('alertNombre', true);
+                isValid = false;
+            }
+
+            if (!apellido) {
+                mostrarAlerta('alertApellido', true);
+                isValid = false;
+            }
+
+            if (!telefono) {
+                mostrarAlerta('alertTelefono', true);
+                isValid = false;
+            }
+
+            if (!direccion) {
+                mostrarAlerta('alertDireccion', true);
+                isValid = false;
+            }
+
+            if (!ciudad) {
+                mostrarAlerta('alertCiudad', true);
+                isValid = false;
+            }
+
+            if (!tipoDocumento) {
+                mostrarAlerta('alertTipoDoc', true);
+                isValid = false;
+            }
+
+            if (!documento) {
+                mostrarAlerta('alertDocumento', true);
+                isValid = false;
+            }
+
+            if (!correo) {
+                mostrarAlerta('alertCorreo', true);
+                isValid = false;
+            }
+
+            if (!contrasena) {
+                mostrarAlerta('alertContrasena', true);
+                isValid = false;
+            }
+
+            if (!tiempo) {
+                mostrarAlerta('alertTiempo', true);
+                isValid = false;
+            }
+
+            if (!genero) {
+                mostrarAlerta('alertGenero', true);
+                isValid = false;
+            }
+
+            if (isValid) {
+                const index = parseInt(usuarioIndexInput.value);
+
+                if (index >= 0) {
+
+                    actualizarUsuario(index);
+                } else {
+
+                    const nuevoUsuario = {
+                        nombre,
+                        apellido,
+                        telefono,
+                        direccion,
+                        ciudad,
+                        tipoDocumento,
+                        documento,
+                        correo,
+                        genero,
+                        fechaRegistro: new Date().toISOString()
+                    };
+
+                    usuarios.push(nuevoUsuario);
+
+                    // Guardar en localStorage
+                    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+
+                    actualizarTabla();
+
+
+                    alertaExito.textContent = "¡Usuario registrado con éxito!";
+                    alertaExito.classList.remove('d-none');
+
+
+                    formularioRegistro.reset();
+
+                    // Ocultar mensaje de éxito después de 3 segundos
+                    setTimeout(() => {
+                        alertaExito.classList.add('d-none');
+                    }, 3000);
+                }
+            }
+        });
+
+
+        btnActualizar.addEventListener('click', function () {
+            const index = parseInt(usuarioIndexInput.value);
+            if (index >= 0) {
+                formularioRegistro.dispatchEvent(new Event('submit'));
+            }
+        });
+
+
+        btnCancelarEdicion.addEventListener('click', cancelarEdicion);
+
+
+        actualizarTabla();
+    </script>
 </body>
+
 </html>
