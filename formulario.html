@@ -468,6 +468,193 @@
                 font-size: 16px;
             }
         }
+        
+        @media (max-width: 480px) {
+            .fondo-contenedor {
+                display: none; 
+            }
+
+            .tabla-contenedor {
+                width: 98%;
+                padding: 10px;
+                margin: 10px auto;
+            }
+
+            .tabla-contenedor h2 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+
+            .grupo-botones {
+                width: 100% !important;
+                flex-direction: column;
+            }
+
+            #abrirModalBtn, #btnEliminarTodos {
+                width: 100% !important;
+                margin-bottom: 10px;
+                height: 40px;
+            }
+
+            .tabla th, .tabla td {
+                padding: 6px 4px;
+                font-size: 12px;
+            }
+
+            .accion-botones {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn-eliminar, .btn-actualizar {
+                width: 100%;
+                padding: 4px;
+                font-size: 12px;
+            }
+
+            .modal-contenido {
+                width: 95%;
+                margin: 5% auto;
+                padding: 15px;
+            }
+
+            .formulario-contenedor {
+                padding: 10px;
+            }
+
+            .imagen img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+
+            .form-control, .form-select {
+                font-size: 14px;
+                padding: 6px;
+            }
+        }
+
+    
+        @media (max-width: 480px) {
+            .tabla-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin-bottom: 15px;
+                width: 100%;
+            }
+
+            .tabla {
+                min-width: 800px; 
+                margin-bottom: 0;
+            }
+
+            .tabla th, .tabla td {
+                white-space: nowrap;
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+
+            .tabla thead th {
+                position: sticky;
+                top: 0;
+                background-color: #c3e0fd;
+                z-index: 1;
+            }
+
+         
+            .tabla-responsive::-webkit-scrollbar {
+                height: 6px;
+            }
+
+            .tabla-responsive::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+
+            .tabla-responsive::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 3px;
+            }
+
+            .tabla-responsive::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
+            
+            .tabla-contenedor {
+                width: 98%;
+                padding: 10px;
+                margin: 10px auto;
+                overflow: hidden;
+            }
+        }
+       
+        @media (min-width: 481px) and (max-width: 768px) {
+            .tabla-contenedor {
+                width: 95%;
+                padding: 15px;
+                margin: 15px auto;
+            }
+
+            .grupo-botones {
+                width: 75% !important;
+            }
+
+            .tabla th, .tabla td {
+                padding: 8px 6px;
+                font-size: 13px;
+            }
+
+            .accion-botones {
+                display: flex;
+                gap: 5px;
+            }
+
+            .modal-contenido {
+                width: 90%;
+                margin: 8% auto;
+            }
+        }
+
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .tabla-contenedor {
+                width: 90%;
+                padding: 20px;
+                margin: 20px auto;
+            }
+
+            .grupo-botones {
+                width: 60% !important;
+            }
+
+            .tabla th, .tabla td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+
+            .modal-contenido {
+                width: 80%;
+                margin: 10% auto;
+            }
+        }
+
+        /* Para escritorios */
+        @media (min-width: 1025px) {
+            .tabla-contenedor {
+                width: 85%;
+                max-width: 1400px;
+            }
+
+            .grupo-botones {
+                width: 50% !important;
+            }
+        }
     </style>
 </head>
 
