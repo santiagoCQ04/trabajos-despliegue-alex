@@ -657,6 +657,68 @@
                 width: 50% !important;
             }
         }
+
+        @media (max-width: 480px) {
+            .modal-confirmar-contenido {
+                width: 95%;
+                margin: 30% auto;
+                padding: 0;
+            }
+
+            .modal-encabezado {
+                padding: 10px 15px;
+            }
+
+            .modal-cuerpo {
+                padding: 15px;
+                font-size: 14px;
+            }
+
+            .modal-pie {
+                padding: 10px 15px;
+            }
+
+            .btn-secundario, .btn-peligro {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            #alertaExito {
+                position: fixed;
+                top: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 2000;
+                width: 90%;
+                font-size: 14px;
+                text-align: center;
+                padding: 10px;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .modal-confirmar-contenido {
+                width: 90%;
+                margin: 20% auto;
+            }
+
+            #alertaExito {
+                width: 80%;
+                top: 20px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .modal-confirmar-contenido {
+                width: 400px;
+                margin: 15% auto;
+            }
+
+            #alertaExito {
+                width: 50%;
+                top: 30px;
+            }
+        }
     </style>
 </head>
 
@@ -839,23 +901,20 @@
         let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
 
         function actualizarTabla() {
-
             while (tbodyUsuarios.firstChild) {
                 tbodyUsuarios.removeChild(tbodyUsuarios.firstChild);
             }
 
-
             if (usuarios.length === 0) {
                 const fila = document.createElement("tr");
                 const celda = document.createElement("td");
-                celda.setAttribute("colspan", "9"); es
+                celda.setAttribute("colspan", "9");
                 celda.className = "text-center";
                 celda.textContent = "No hay usuarios registrados";
                 fila.appendChild(celda);
                 tbodyUsuarios.appendChild(fila);
                 return;
             }
-
 
             usuarios.forEach((usuario, index) => {
                 const fila = document.createElement("tr");
@@ -905,10 +964,8 @@
                     mostrarModalConfirmacion(index);
                 });
 
-
                 celdaAcciones.appendChild(btnActualizar);
                 celdaAcciones.appendChild(btnEliminar);
-
 
                 fila.appendChild(celdaIndex);
                 fila.appendChild(celdaNombre);
@@ -924,13 +981,10 @@
             });
         }
 
-
         function cargarUsuarioParaEditar(index) {
             const usuario = usuarios[index];
 
-
             usuarioIndexInput.value = index;
-
 
             document.getElementById('nombre').value = usuario.nombre;
             document.getElementById('apellido').value = usuario.apellido;
@@ -941,7 +995,6 @@
             document.getElementById('documento').value = usuario.documento;
             document.getElementById('correo').value = usuario.correo;
 
-
             const generoElements = document.getElementsByName('genero');
             for (let i = 0; i < generoElements.length; i++) {
                 if (generoElements[i].value === usuario.genero) {
@@ -950,43 +1003,31 @@
                 }
             }
 
-
             formularioTitulo.textContent = "Editar Usuario";
-
 
             btnRegistrar.classList.add('d-none');
             btnActualizar.classList.remove('d-none');
             btnCancelarEdicion.classList.remove('d-none');
 
-
             miModal.style.display = "block";
         }
 
-
         function cancelarEdicion() {
-
             formularioRegistro.reset();
 
             // Restablecer el índice del usuario
             usuarioIndexInput.value = "-1";
 
-
             formularioTitulo.textContent = "Formulario de Registro";
-
 
             btnRegistrar.classList.remove('d-none');
             btnActualizar.classList.add('d-none');
             btnCancelarEdicion.classList.add('d-none');
 
-
             miModal.style.display = "none";
         }
 
-
         function actualizarUsuario(index) {
-
-
-
             const nombre = document.getElementById('nombre').value.trim();
             const apellido = document.getElementById('apellido').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
@@ -1005,7 +1046,6 @@
                 }
             }
 
-
             usuarios[index] = {
                 nombre,
                 apellido,
@@ -1019,16 +1059,11 @@
                 fechaRegistro: usuarios[index].fechaRegistro
             };
 
-
             localStorage.setItem('usuarios', JSON.stringify(usuarios));
-
-
             actualizarTabla();
-
 
             alertaExito.textContent = "¡Usuario actualizado con éxito!";
             alertaExito.classList.remove('d-none');
-
 
             setTimeout(() => {
                 alertaExito.classList.add('d-none');
@@ -1040,11 +1075,9 @@
 
         function mostrarModalConfirmacion(index) {
             if (index === -1) {
-                //  eliminar todos los usuarios
                 modalConfirmarTitulo.textContent = "Confirmar eliminación";
                 modalConfirmarMensaje.textContent = "¿Estás seguro de que quieres eliminar todos los registros?";
             } else {
-                //  eliminar un usuario específico
                 const usuario = usuarios[index];
                 modalConfirmarTitulo.textContent = "Confirmar eliminación de usuario";
                 modalConfirmarMensaje.textContent = `¿Estás seguro de que quieres eliminar al usuario ${usuario.nombre} ${usuario.apellido}?`;
@@ -1052,43 +1085,64 @@
 
             btnConfirmarEliminar.dataset.index = index;
             modalConfirmar.style.display = "block";
+            
+            // Asegurarse de que la alerta de éxito esté oculta al abrir el modal
+            alertaExito.classList.add('d-none');
         }
-
 
         btnEliminarTodos.addEventListener('click', function () {
             mostrarModalConfirmacion(-1);
         });
 
-        //  confirmación de eliminación
         btnConfirmarEliminar.addEventListener('click', function () {
             const index = parseInt(this.dataset.index);
 
             if (index === -1) {
                 // Eliminar todos los usuarios
                 usuarios = [];
+                
+                // Actualizar localStorage y tabla
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));
+                actualizarTabla();
+
+                // Mostrar mensaje de éxito
+                alertaExito.textContent = "¡Todos los registros han sido eliminados!";
+                alertaExito.classList.remove('d-none');
+                
+                // Cerrar el modal de confirmación
+                modalConfirmar.style.display = "none";
+                
+                // Ocultar mensaje de éxito después de 3 segundos
+                setTimeout(() => {
+                    alertaExito.classList.add('d-none');
+                }, 3000);
             } else {
-                // Eliminar solo el usuario seleccionado
+                // Eliminar usuario específico
                 usuarios.splice(index, 1);
+                localStorage.setItem('usuarios', JSON.stringify(usuarios));
+                actualizarTabla();
+                
+                // Mostrar mensaje de éxito
+                alertaExito.textContent = "¡Usuario eliminado con éxito!";
+                alertaExito.classList.remove('d-none');
+                
+                // Cerrar el modal de confirmación
+                modalConfirmar.style.display = "none";
+                
+                // Ocultar mensaje de éxito después de 3 segundos
+                setTimeout(() => {
+                    alertaExito.classList.add('d-none');
+                }, 3000);
             }
-
-            // Guardar en localStorage y actualizar tabla
-            localStorage.setItem('usuarios', JSON.stringify(usuarios));
-            actualizarTabla();
-
-
-            modalConfirmar.style.display = "none";
         });
-
 
         btnCancelar.addEventListener('click', function () {
             modalConfirmar.style.display = "none";
         });
 
-
         modalCerrar.addEventListener('click', function () {
             modalConfirmar.style.display = "none";
         });
-
 
         window.addEventListener('click', function (event) {
             if (event.target == modalConfirmar) {
@@ -1096,9 +1150,7 @@
             }
         });
 
-
         abrirModalBtn.addEventListener("click", function () {
-
             formularioTitulo.textContent = "Formulario de Registro";
             btnRegistrar.classList.remove('d-none');
             btnActualizar.classList.add('d-none');
@@ -1109,18 +1161,15 @@
             miModal.style.display = "block";
         });
 
-
         cerrarBtn.addEventListener("click", function () {
             miModal.style.display = "none";
         });
-
 
         window.addEventListener("click", function (event) {
             if (event.target === miModal) {
                 miModal.style.display = "none";
             }
         });
-
 
         function mostrarAlerta(id, mostrar) {
             const alerta = document.getElementById(id);
@@ -1159,7 +1208,6 @@
                     break;
                 }
             }
-
 
             let isValid = true;
 
@@ -1222,10 +1270,8 @@
                 const index = parseInt(usuarioIndexInput.value);
 
                 if (index >= 0) {
-
                     actualizarUsuario(index);
                 } else {
-
                     const nuevoUsuario = {
                         nombre,
                         apellido,
@@ -1241,27 +1287,23 @@
 
                     usuarios.push(nuevoUsuario);
 
-                    // Guardar en localStorage
+             
                     localStorage.setItem('usuarios', JSON.stringify(usuarios));
 
-
                     actualizarTabla();
-
 
                     alertaExito.textContent = "¡Usuario registrado con éxito!";
                     alertaExito.classList.remove('d-none');
 
-
                     formularioRegistro.reset();
 
-                    // Ocultar mensaje de éxito después de 3 segundos
+                   
                     setTimeout(() => {
                         alertaExito.classList.add('d-none');
                     }, 3000);
                 }
             }
         });
-
 
         btnActualizar.addEventListener('click', function () {
             const index = parseInt(usuarioIndexInput.value);
@@ -1270,10 +1312,9 @@
             }
         });
 
-
         btnCancelarEdicion.addEventListener('click', cancelarEdicion);
 
-
+      
         actualizarTabla();
     </script>
 </body>
