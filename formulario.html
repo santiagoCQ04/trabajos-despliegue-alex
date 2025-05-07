@@ -761,7 +761,7 @@
         </div>
     </div>
 
-    <!-- Modal de confirmación para eliminar todos los registros -->
+    
     <div id="modalConfirmar">
         <div class="modal-confirmar-contenido">
             <div class="modal-encabezado">
@@ -1069,7 +1069,6 @@
                 alertaExito.classList.add('d-none');
             }, 3000);
 
-            // Cancelar (limpiar formulario y cerrar modal)
             cancelarEdicion();
         }
 
@@ -1086,7 +1085,7 @@
             btnConfirmarEliminar.dataset.index = index;
             modalConfirmar.style.display = "block";
             
-            // Asegurarse de que la alerta de éxito esté oculta al abrir el modal
+
             alertaExito.classList.add('d-none');
         }
 
@@ -1105,14 +1104,13 @@
                 localStorage.setItem('usuarios', JSON.stringify(usuarios));
                 actualizarTabla();
 
-                // Mostrar mensaje de éxito
+              
                 alertaExito.textContent = "¡Todos los registros han sido eliminados!";
                 alertaExito.classList.remove('d-none');
                 
                 // Cerrar el modal de confirmación
                 modalConfirmar.style.display = "none";
-                
-                // Ocultar mensaje de éxito después de 3 segundos
+             
                 setTimeout(() => {
                     alertaExito.classList.add('d-none');
                 }, 3000);
@@ -1122,11 +1120,11 @@
                 localStorage.setItem('usuarios', JSON.stringify(usuarios));
                 actualizarTabla();
                 
-                // Mostrar mensaje de éxito
+                
                 alertaExito.textContent = "¡Usuario eliminado con éxito!";
                 alertaExito.classList.remove('d-none');
                 
-                // Cerrar el modal de confirmación
+                
                 modalConfirmar.style.display = "none";
                 
                 // Ocultar mensaje de éxito después de 3 segundos
