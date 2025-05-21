@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <h1> Restaurante Los Miradores</h1>
+    </header>
+    <div class="contenedor">
+        <div id="miModal" class="formulario">
+            <input type="text" name="" id="nro" placeholder="nro">
+            <input type="text" name="" id="descripcion" placeholder="descricion">
+            <input type="text" name="" id="personas" placeholder="personas">
+            <select id="estado" placeholder="estado">
+                <option value="libre">Libre</option>
+                <option value="ocupado">Ocupado</option>
+                <option value="reservado">Reservado</option>
+            </select>
+            <button id="registrar">
+                <h4>Guardar Mesa</h4>
+            </button>
+            <button id="cerrar" onclick="cerrarModal()">
+                <h4>Cerrar Modal</h4>
+            </button>
+        </div>
+    </div>
+
+    <div class="container-buttons">
+        <div class="buscar">
+            <input type="text" id="buscador" placeholder="Buscar Mesa">
+        </div>
+        <button id="abrir_Modal" onclick="abrir_Modal()">
+            <h2>Apartar Mesa</h2>
+        </button>
+    </div>
+
+    <!--  alertas de todo -->
+    <dialog id="ventanaAlerta" class="dialogo-alerta">
+        <div class="contenido-dialogo">
+            <h3 id="tituloAlerta"></h3>
+            <p id="mensajeAlerta"></p>
+            <button onclick="cerrarDialogo('ventanaAlerta')" class="boton-dialogo">Aceptar</button>
+            <dialog id="ventanaConfirmar" class="dialogo-alerta">
+                <div class="contenido-dialogo">
+                    <h3>Confirmar</h3>
+                    <p id="mensajeConfirmar"></p>
+                    <div class="botones-dialogo">
+                        <button id="btnConfirmar" class="boton-dialogo confirmar">Confirmar</button>
+                        <button onclick="cerrarDialogo('ventanaConfirmar')"
+                            class="boton-dialogo cancelar">Cancelar</button>
+                    </div>
+                </div>
+            </dialog>
+        </div>
+    </dialog>
+
+    <div id="mesas"></div>
+
+    <script>
+        let datosMesa = []
+        let modo = 0
+        let numMesa = ""
+
+       /*  alertas */
+       // Agregar antes de las demás funciones
+function mostrarAlerta(titulo, mensaje) {
+    const dialogo = document.getElementById('ventanaAlerta');
+    document.getElementById('tituloAlerta').textContent = titulo;
+    document.getElementById('mensajeAlerta').textContent = mensaje;
+    dialogo.showModal();
+}
+
+function mostrarConfirmacion(mensaje, alConfirmar) {
+    const dialogo = document.getElementById('ventanaConfirmar');
+    document.getElementById('mensajeConfirmar').textContent = mensaje;
+    
+    const btnConfirmar = document.getElementById('btnConfirmar');
+    btnConfirmar.onclick = () => {
+        alConfirmar();
+        cerrarDialogo('ventanaConfirmar');
+    };
+    
+    dialogo.showModal();
+}
+
+function cerrarDialogo(id) {
+    document.getElementById(id).close();
+}
+
+        function Color_Mesa(divCard, item) {
+            if (item.estado === "libre") {
+                divCard.style.background = "white"
+            } else if (item.estado === "ocupado") {
+                divCard.style.background = "red"
+            } else if (item.estado === "reservado") {
+                divCard.style.background = "orange"
+            } else {
+                divCard.style.background = "white"
+            }
+        }
+
+        document.getElementById("registrar").addEventListener("click", () => {
+            if (modo == 0) {
+                guardarMesa()
+            } else if (modo == 1) {
+                editarMesa()
+            }
+        })
+
+        function abrir_Modal() {
+            document.getElementById('miModal').style.display = 'block';
+        }
+        function cerrarModal() {
+            document.getElementById('miModal').style.display = 'none';
+        }
+
+        function guardarMesa() {
+            let Mesa_registrada = datosMesa.find(mesa => mesa.numero == document.getElementById("nro").value)
+            if (document.getElementById("nro").value == "") {
+                mostrarAlerta("Error", "Por favor digite el numero de la mesa")
+            }
+            if (Mesa_registrada) {
+             mostrarAlerta("Error", "mesa existente")
+                return;
+            } else if (document.getElementById("descripcion").value == "") {
+               mostrarAlerta("Error", "Por favor digite la descripcion de la mesa")
+            } else if (document.getElementById("personas").value == "") {
+               mostrarAlerta("Error", "Por favor digite la cantidad de personas")
+            } else if (document.getElementById("estado").value == "") {
+           mostrarAlerta("Error","Por favor digite el estado de la mesa ")
+            } else {
+                let mesa = {
+                    numero: document.getElementById("nro").value,
+                    descripcion: document.getElementById("descripcion").value,
+                    personas: document.getElementById("personas").value,
+                    estado: document.getElementById("estado").value,
+                }
+                datosMesa.unshift(mesa)
+               mostrarAlerta("Éxito", "Mesa registrada con éxito")
+                limpiar()
+                pintarMesas()
+            }
+        }
+
+        function limpiar() {
+            document.getElementById("nro").value = ""
+            document.getElementById("descripcion").value = ""
+            document.getElementById("personas").value = ""
+            document.getElementById("estado").value = ""
+        }
+
+        function editarMesa() {
+            let Mesa_registrada = datosMesa.find(mesa => mesa.numero == document.getElementById("nro").value)
+            if (Mesa_registrada) {
+               mostrarAlerta("Error", "mesa existente")
+                return;
+            } else {
+                let indice = datosMesa.findIndex(it => it.numero == numMesa)
+                datosMesa[indice].numero = document.getElementById("nro").value
+                datosMesa[indice].descripcion = document.getElementById("descripcion").value
+                datosMesa[indice].personas = document.getElementById("personas").value
+                datosMesa[indice].estado = document.getElementById("estado").value
+                pintarMesas()
+                modo = 0
+                document.getElementById("registrar").textContent = "Guardar Mesa"
+                mostrarAlerta("Éxito", "Mesa editada con éxito")
+                limpiar()
+            }
+        }
+
+        function pintarMesasFiltradas(lista) {
+            document.getElementById("mesas").textContent = ""
+            lista.forEach((item, i) => {
+                let divCard = document.createElement("div")
+                divCard.id = "divCard"
+                let divImagen = document.createElement("div")
+                let imagen = document.createElement("img")
+                imagen.id = "mesa"
+                imagen.src = "https://png.pngtree.com/png-vector/20240131/ourmid/pngtree-restaurant-table-set-png-image_11522061.png"
+                divImagen.appendChild(imagen)
+                divCard.appendChild(divImagen)
+                document.getElementById("mesas").appendChild(divCard)
+                let divTextos = document.createElement("div")
+                let parrafoDescripcion = document.createElement("p")
+                let numeroMesa = document.createElement("span")
+                numeroMesa.textContent = item.numero
+                parrafoDescripcion.textContent = item.descripcion
+                divTextos.appendChild(parrafoDescripcion)
+                divTextos.appendChild(numeroMesa)
+                divCard.appendChild(divTextos)
+                let divBotones = document.createElement("div")
+                let editar = document.createElement("button")
+                editar.textContent = "📝"
+                Color_Mesa(divCard, item)
+                editar.addEventListener("click", () => {
+                    document.getElementById("nro").value = item.numero
+                    document.getElementById("descripcion").value = item.descripcion
+                    document.getElementById("personas").value = item.personas
+                    document.getElementById("estado").value = item.estado
+                    document.getElementById("registrar").textContent = "Editar Mesa"
+                    modo = 1
+                    numMesa = item.numero
+                    abrir_Modal()
+                })
+                let eliminar = document.createElement("button")
+                eliminar.textContent = "❌"
+                eliminar.addEventListener("click", () => {
+                    let indice = datosMesa.findIndex(it => it.numero == item.numero)
+                    datosMesa.splice(indice, 1)
+                    pintarMesas()
+                    mostrarAlerta("Éxito", "Mesa eliminada con éxito")
+                })
+                divBotones.appendChild(editar)
+                divBotones.appendChild(eliminar)
+                divCard.appendChild(divBotones)
+            })
+        }
+
+        function pintarMesas() {
+            pintarMesasFiltradas(datosMesa)
+        }
+
+        // Búsqueda dinámica
+        function buscarMesas() {
+            let texto = document.getElementById("buscador").value.trim().toLowerCase();
+            let filtradas = datosMesa.filter(mesa =>
+                mesa.numero.toLowerCase().includes(texto) ||
+                mesa.descripcion.toLowerCase().includes(texto) ||
+                mesa.estado.toLowerCase().includes(texto)
+            );
+            pintarMesasFiltradas(filtradas);
+        }
+
+        document.getElementById("buscador").addEventListener("input", buscarMesas);
+
+    </script>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('https://wallpapers.com/images/featured/fondos-de-hermosos-paisajes-wnxju2647uqrcccv.jpg');
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: cover;
+            padding: 0px;
+            margin: 0px;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 150px;
+            animation: borderContenedor 0.9s linear infinite;
+            transition: background-color 0.3s ease;
+            transition: all 0.5s ease;
+            background-size: 200% 200%;
+            transition: background 0.5s ease;
+            background-size: 150% 150%;
+            z-index: 1;
+            margin-top: -25px;
+        }
+
+        header h1 {
+            font-size: 40px;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        @keyframes borderContenedor {
+            0% {
+                box-shadow: 0px 0px 10px rgb(9, 36, 0);
+            }
+
+            50% {
+                box-shadow: 0px 0px 20px rgb(9, 36, 0);
+            }
+
+            100% {
+                box-shadow: 0px 0px 10px rgb(45, 140, 196);
+            }
+        }
+
+
+        /*   alertas */
+        /* Agregar al final de la sección de estilos */
+        .dialogo-alerta {
+            padding: 0;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            background: white;
+        }
+
+        .dialogo-alerta::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .contenido-dialogo {
+            padding: 20px;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .contenido-dialogo h3 {
+            margin: 0 0 15px;
+            color: #333;
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+        }
+
+        .contenido-dialogo p {
+            margin: 0 0 20px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .boton-dialogo {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Dancing Script', cursive;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .boton-dialogo.confirmar {
+            background: #71c0ee;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .boton-dialogo.cancelar {
+            background: #dc3545;
+            color: white;
+        }
+
+        .botones-dialogo {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #registrar h4 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+        }
+
+        #cerrar h4 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+        }
+
+        #registrar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            height: 50px;
+            background-color: rgb(168, 231, 247);
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid rgb(106, 217, 245);
+            box-shadow: 0px 0px 10px rgb(38, 0, 255);
+        }
+
+        #cerrar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            height: 50px;
+            background-color: rgb(177, 230, 243);
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid rgb(124, 229, 255);
+            box-shadow: 0px 0px 10px rgb(38, 0, 255);
+        }
+
+        #abrir_Modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            height: 40px;
+            background-color: rgb(160, 241, 255);
+            border-radius: 10px;
+            border: 3px solid rgb(3, 169, 211);
+            box-shadow: 0px 0px 10px black;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        #abrir_Modal h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+        }
+
+        #btnBuscar:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #btnBuscar {
+            background-color: #71c0ee;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        #btnBuscar h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 12px;
+            color: black;
+        }
+
+        #buscador {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            width: 200px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        #miModal {
+            display: flex;
+            display: none;
+            position: fixed;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1;
+            box-shadow: 0px 0px 10px rgba(0, 236, 253, 0.1);
+            border: 2px solid blue;
+            background-image: url('https://wallpapers.com/images/featured/fondos-de-paisajes-naturales-k9tfch0hpfjbaxel.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-width: 300px;
+            min-height: 300px;
+        }
+
+        #mesa {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            width: 200px;
+        }
+
+        .formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 70%;
+        }
+
+        .formulario input {
+            display: flex;
+            flex-direction: column;
+            width: 70%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid black;
+            box-shadow: 0px 0px 10px black;
+        }
+
+        #estado {
+            display: flex;
+            flex-direction: column;
+            width: 73%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid black;
+            box-shadow: 0px 0px 10px black;
+        }
+
+        .formulario button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid black;
+            background-color: rgb(113, 243, 27);
+            box-shadow: 0px 0px 10px black;
+        }
+
+        .contenedor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            border: 1px solid black;
+            width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(70, 3, 61, 0.1);
+        }
+
+        #divCard {
+            border: 1px solid gray;
+            padding: 10px;
+            border-radius: 8px;
+            width: auto;
+            height: auto;
+        }
+
+        #mesas {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            border-radius: 8px;
+            background-color: seashell;
+            box-shadow: 0px 0px 5px black;
+        }
+
+        #divBotones {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .container-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .buscar {
+            display: flex;
+            gap: 10px;
+        }
+
+        @media(max-width:400px){
+            #mesas {
+                grid-template-columns: 1fr;
+            }
+            .container-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            #miModal {
+                width: 90%;
+                height: 90%;
+            }
+        }
+        @media(max-width:480px){
+            #mesas {
+                grid-template-columns: 1fr;
+            }
+            .container-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            #miModal {
+                width: 90%;
+                height: 90%;
+            }
+        }
+        @media(max-width:800px){
+            #mesas {
+                grid-template-columns: 1fr 1fr;
+            }
+            .container-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            #miModal {
+                width: 90%;
+                height: 90%;
+            }
+        }
+         @media (min-width: 601px) and (max-width: 1024px){
+            #mesas {
+                grid-template-columns: 1fr 1fr;
+            }
+            .container-buttons {
+                align-items: center;
+            }
+            #miModal {
+                
+             min-width: 300px;
+            min-height: 300px;
+            }
+         }
+        @media (min-width: 1025px) and (max-width: 1440px){
+            #mesas {
+                grid-template-columns: 1fr 1fr;
+            }
+            .container-buttons {
+                align-items: center;
+            }
+            #miModal {
+                width: 50%;
+                height: 50%;
+            }
+         }
+
+    </style>
+</body>
+
+</html>
