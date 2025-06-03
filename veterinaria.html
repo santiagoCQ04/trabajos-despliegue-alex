@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veterinaria My Little Bear</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 60px;
+            background-color: #d6edf8;
+            
+        }
+
+        header {
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #9fe9ee;
+            animation: borderContenedor 0.9s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes borderContenedor {
+            0% {
+                box-shadow: 0px 0px 10px rgb(9, 36, 0);
+            }
+
+            50% {
+                box-shadow: 0px 0px 20px rgb(9, 36, 0);
+            }
+
+            100% {
+                box-shadow: 0px 0px 10px #0594f3;
+            }
+        }
+
+        header h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 40px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #buscador {
+            padding: 10px 30px;
+            border: 3px solid #07d9f5;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .grupo_botones {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        #botones {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border: 1px solid #b5e1f5;
+            border-radius: 10px;
+        }
+
+        #abrir_Modal {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #9fe9ee;
+            cursor: pointer;
+        }
+
+        #abrir_Modal h2 {
+            font-family: 'Dancing Script', cursive;
+            margin: 0;
+            padding: 5px 15px;
+        }
+
+        .linea {
+            height: 8px;
+            width: 80%;
+            background-color: #9fe9ee;
+            margin: 20px 0;
+        }
+
+
+        #miModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #miModal.active {
+            display: grid;
+           background-color: rgba(191, 161, 246, 0.8);
+        }
+
+        #miModal textarea {
+            grid-column: span 2;
+            resize: vertical;
+        }
+
+        #miModal button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #registrar {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        #cerrar {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #miModal h4 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 15px;
+            margin: 0;
+        }
+
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #9fe9ee;
+            border-top: 1px solid rgb(7, 197, 255);
+            animation: borderContenedor 0.9s linear infinite;
+            z-index: 1;
+        }
+
+        footer h5 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+        }
+
+        /* Efecto blur */
+        .blur-effect {
+            filter: blur(2px);
+        }
+
+        
+        .dialogo-alerta {
+            border: none;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .contenido-dialogo {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .botones-dialogo {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .boton-dialogo {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .boton-dialogo.confirmar {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .boton-dialogo.cancelar {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .divCard {
+            background-color: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+              animation: borderContenedor 0.9s linear infinite;
+           width: auto;
+           height: auto;
+           box-sizing: border-box;
+            margin: 10px;
+        }
+
+        .imagenCard {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #9fe9ee;
+        }
+
+        .divCard h3 {
+            font-family: 'Dancing Script', cursive;
+            color: #333;
+            margin: 5px 0;
+            text-align: center;
+        }
+
+        .divCard p {
+            font-size: 14px;
+            color: #000000;
+            margin: 3px 0;
+        }
+
+        .divBotones {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .botonEditar,
+        .botonEliminar {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .botonEditar {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .botonEliminar {
+            background-color: #f44336;
+            color: white;
+        }
+
+        #animales {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        .selectEstado {
+    padding: 5px 10px;
+    border: 1px solid #9fe9ee;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.divEstado {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.imagen_header img{
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    z-index: 1;
+}
+.imagen_footer img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    z-index: 1;
+}
+.texto_header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* responsibidades */
+ @media(max-width:400px){
+    header {
+        height: auto;
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    header h4 {
+        font-size: 16px;
+    }
+
+    .imagen_header img {
+        width: 60px;
+        height: 60px;
+    }
+
+    #buscador {
+        width: 95%;
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .grupo_botones {
+        flex-direction: column;
+        align-items: center;
+        width: 95%;
+        gap: 10px;
+    }
+
+    #botones {
+        width: 100%;
+        margin-bottom: 10px;
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    #abrir_Modal {
+        width: 100%;
+        padding: 8px;
+    }
+
+    #abrir_Modal h2 {
+        font-size: 16px;
+    }
+
+    .divCard {
+        width: 100%;
+        padding: 15px;
+        margin: 10px 5px;
+    }
+
+    .imagenCard {
+        width: 100px;
+        height: 100px;
+    }
+
+    .divCard h3 {
+        font-size: 18px;
+    }
+
+    .divCard p {
+        font-size: 12px;
+    }
+
+    .divBotones {
+        gap: 5px;
+    }
+
+    .botonEditar, 
+    .botonEliminar {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    footer {
+        height: auto;
+        padding: 10px;
+    }
+
+    footer h5 {
+        font-size: 16px;
+    }
+
+    .imagen_footer img {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+ @media(max-width:480px) {
+    header {
+        height: auto;
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 28px;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    header h4 {
+        font-size: 18px;
+    }
+
+    .imagen_header img {
+        width: 70px;
+        height: 70px;
+    }
+
+    #buscador {
+        width: 90%;
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+
+    .grupo_botones {
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+        gap: 12px;
+    }
+
+    #botones {
+        width: 100%;
+        margin-bottom: 12px;
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    #abrir_Modal {
+        width: 100%;
+        padding: 10px;
+    }
+
+    #abrir_Modal h2 {
+        font-size: 20px;
+    }
+
+    .divCard {
+        width: 100%;
+        padding: 15px;
+        margin: 12px 5px;
+    }
+
+    .imagenCard {
+        width: 130px;
+        height: 130px;
+    }
+
+    .divCard h3 {
+        font-size: 20px;
+    }
+
+    .divCard p {
+        font-size: 14px;
+    }
+
+    .divBotones {
+        gap: 8px;
+    }
+
+    .botonEditar, 
+    .botonEliminar {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
+  @media (min-width: 601px) and (max-width: 1024px){
+    header h1 {
+        font-size: 45px;
+    }
+
+    #buscador {
+        width: 70%;
+    }
+
+    .grupo_botones {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 70%;
+    }
+
+    #botones {
+        width: auto;
+    }
+
+    #abrir_Modal h2 {
+        font-size: 24px;
+    }
+
+    .divCard {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .imagenCard {
+        width: 160px;
+        height: 160px;
+    }   
+  }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div  class="imagen_header">
+            <img src="https://st2.depositphotos.com/1007168/5524/i/450/depositphotos_55249385-stock-photo-veterinary-blue-circle-label-with.jpg" alt="">
+        </div>
+       <div class="texto_header">
+         <h1>Veterinaria My little Bear 🐕</h1>    
+         <h4>for a happy and fun family</h4>
+       </div>
+    </header>
+
+    <div class="main-content" id="mainContent">
+        <input type="text" id="buscador" placeholder="Buscar Mascota 🔍">
+
+        <div class="grupo_botones">
+            <select id="botones">
+                <option value="todas">todas las citas 🦮</option>
+                <option value="abierta">Abierta🏪</option>
+                <option value="terminada">Terminada❌</option>
+                <option value="anulada">Anulada✂️</option>
+            </select>
+            <button id="abrir_Modal" onclick="abrirModal()">
+                <h2>Guardar nueva Cita 🐾</h2>
+            </button>
+        </div>
+
+        <div class="linea"></div>
+    </div>
+
+    <div id="miModal" class="formulario">
+        <input type="text" id="nombreMascota" placeholder="Nombre de la Mascota">
+        <input type="text" id="nombrePropietario" placeholder="Nombre del Propietario">
+        <input type="number" id="numeroPropietario" placeholder="Telefono">
+        <input type="date" id="fechaCita" placeholder="Fecha de la Cita">
+        <input type="time" id="horaCita" placeholder="Hora de la Cita">
+        <select id="Mascotas">
+            <option value="animal-1">Gato</option>
+            <option value="animal-2">Perro</option>
+            <option value="animal-3">Serpiente</option>
+            <option value="animal-4">Loro</option>
+            <option value="animal-5">Ratón</option>
+            <option value="animal-6">Gallina</option>
+            <option value="animal-7">Conejo</option>
+            <option value="animal-8">Caballo</option>
+            <option value="animal-9">Cabra</option>
+            <option value="animal-10">Vaca</option>
+        </select>
+        <textarea id="motivo" rows="8" placeholder="Sintomas de la Mascota"></textarea>
+        <button id="registrar" onclick="registrarMascota()">
+            <h4>Registrar Mascota 🦝</h4>
+        </button>
+        <button id="cerrar" onclick="cerrarModal()">
+            <h4>Salir 🗑️</h4>
+        </button>
+    </div>
+
+    <!-- aqui estan todas las alertas -->
+    <dialog id="ventanaConfirmar" class="dialogo-alerta">
+        <div class="contenido-dialogo">
+            <h3>Confirmar</h3>
+            <p id="mensajeConfirmar"></p>
+            <div class="botones-dialogo">
+                <button id="btnConfirmar" class="boton-dialogo confirmar">Confirmar</button>
+                <button onclick="cerrarDialogo('ventanaConfirmar')" class="boton-dialogo cancelar">Cancelar</button>
+            </div>
+        </div>
+    </dialog>
+    <dialog id="ventanaAlerta" class="dialogo-alerta">
+        <div class="contenido-dialogo">
+            <h3 id="tituloAlerta"></h3>
+            <p id="mensajeAlerta"></p>
+            <div class="botones-dialogo">
+                <button onclick="cerrarDialogo('ventanaAlerta')" class="boton-dialogo">Aceptar</button>
+            </div>
+        </div>
+    </dialog>
+    <footer>
+        <div class="imagen_footer">
+            <img src="https://st2.depositphotos.com/5056293/9389/v/450/depositphotos_93899252-stock-illustration-vector-sign-veterinary.jpg" alt="">
+        </div>
+        <h5>&copy;copyright Veterinaria little Bear  🐶</h5>
+    </footer>
+
+    <div id="animales"></div>
+
+    <script>
+        let datosveterinaria = [];
+        let modo = 0
+        let contadorId=1
+        let idMascota = 0
+        let datos_filtrados=[]
+
+        document.getElementById("fechaCita").min = new Date().toISOString().split("T")[0];  /*  establece la fecha mínima del input de fecha a la fecha actual */
+
+       /*  buscador */
+   document.getElementById('buscador').addEventListener('input', function(e) {  /*  función anónima que se ejecuta cuando se dispara el evento input */
+    const busqueda = e.target.value.toLowerCase().trim();  /* target Es el elemento HTML específico que disparó el evento. */
+    if (busqueda === '') {
+        pintarMascotas();
+    } else {
+        const resultados = datosveterinaria.filter(item => 
+            item.nombreMascota.toLowerCase().includes(busqueda) || 
+            item.nombrePropietario.toLowerCase().includes(busqueda) || 
+            item.id.toString().includes(busqueda)    // tostring() combierte numero a texto 
+        );
+        pintarMascotasfiltradas(resultados);
+    }
+});
+
+
+/* funcion filtrar por estados  */
+document.getElementById('botones').addEventListener('change', function(e) {
+    const estadoSeleccionado = e.target.value;
+    if(estadoSeleccionado === 'todas') {
+        pintarMascotas();
+    } else {
+        const citasFiltradas = datosveterinaria.filter(item => 
+            item.estado === estadoSeleccionado
+        );
+        pintarMascotasfiltradas(citasFiltradas);
+    }
+});
+        function pintarMascotasfiltradas(lista) {
+            document.getElementById('animales').textContent = "";
+            
+            // Verificar si hay resultados
+            if(lista.length === 0) {
+                const noResultados = document.createElement('div');
+                noResultados.style.textAlign = 'center';
+                noResultados.style.width = '100%';
+                noResultados.style.padding = '20px';
+                noResultados.innerHTML = '<h3>No se encontraron resultados</h3>';
+                document.getElementById('animales').appendChild(noResultados);
+                return;
+            }
+
+            // Si hay resultados, crear las cards
+            lista.forEach((item, i) => {
+                let divCard = document.createElement('div');
+                divCard.id = "divCard";
+                divCard.className = "divCard";
+
+                // Crear contenedor de imagen
+                let divImagen = document.createElement('div');
+                let imagen = document.createElement('img');
+                imagen.className = "imagenCard";
+
+                // Nombre de la mascota
+                let divNombreMascota = document.createElement('div');
+                let textoMascota = document.createElement('h3');
+                textoMascota.textContent = `Mascota: ${item.nombreMascota}`;
+                divNombreMascota.appendChild(textoMascota);
+                divCard.appendChild(divNombreMascota);
+
+                // ID de la cita
+                let idCita = document.createElement('div');
+                let textoId = document.createElement('h3');
+                textoId.textContent = `ID Cita: ${item.id}`;
+                textoId.style.textAlign = "center";
+                idCita.appendChild(textoId);
+                divCard.appendChild(idCita);
+
+                // Agregar imagen
+                divImagen.appendChild(imagen);
+                divCard.appendChild(divImagen);
+
+                // Información del propietario
+                let propietario = document.createElement('div');
+                let parrafoPropietario = document.createElement('p');
+                parrafoPropietario.textContent = `Propietario: ${item.nombrePropietario}`;
+                propietario.appendChild(parrafoPropietario);
+                divCard.appendChild(propietario);
+
+                // Teléfono
+                let telefono = document.createElement('div');
+                let parrafoTelefono = document.createElement('p');
+                parrafoTelefono.textContent = `Telefono: ${item.numeroPropietario}`;
+                telefono.appendChild(parrafoTelefono);
+                divCard.appendChild(telefono);
+
+                // Fecha
+                let fecha = document.createElement('div');
+                let parrafoFecha = document.createElement('p');
+                parrafoFecha.textContent = `Fecha de la cita: ${item.fechaCita}`;
+                fecha.appendChild(parrafoFecha);
+                divCard.appendChild(fecha);
+
+                // Hora
+                let hora = document.createElement('div');
+                let parrafoHora = document.createElement('p');
+                parrafoHora.textContent = `Hora de la cita: ${item.horaCita}`;
+                hora.appendChild(parrafoHora);
+                divCard.appendChild(hora);
+
+                // Tipo de mascota
+                let tipoMascota = document.createElement('div');
+                let parrafoTipo = document.createElement('p');
+                parrafoTipo.textContent = `Tipo de mascota: ${item.tipoMascota}`;
+                tipoMascota.appendChild(parrafoTipo);
+                divCard.appendChild(tipoMascota);
+
+                // Asignar imagen según tipo de mascota
+                if (item.tipoMascota === "animal-1") {
+                    imagen.src = "https://static.nationalgeographic.es/files/styles/image_3200/public/75552.ngsversion.1422285553360.webp?w=1600&h=1067";
+                } else if (item.tipoMascota === "animal-2") {
+                    imagen.src = "https://pampermut.com/blog/wp-content/uploads/2020/05/Como-es-el-caracter-de-tu-perro-segun-su-horoscopo-scaled.jpg";
+                } else if (item.tipoMascota === "animal-3") {
+                    imagen.src = "https://humanidades.com/wp-content/uploads/2017/03/serpiente-azul-1-e1564541782147.jpg";
+                } else if (item.tipoMascota === "animal-4") {
+                    imagen.src = "https://img.freepik.com/foto-gratis/primer-plano-guacamaya-roja-vista-lateral-closeup-cabeza-guacamaya-roja_488145-3540.jpg?semt=ais_hybrid&w=740";
+                } else if (item.tipoMascota === "animal-5") {
+                    imagen.src = "https://sciencemediacentre.es/sites/default/files/2022-05/Un-farmaco-ya-en-uso-en-humanos-corrige-la-obesidad-en-ratones-sin-efectos-secundarios.png";
+                } else if (item.tipoMascota === "animal-6") {
+                    imagen.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJLK8AkFvHjoY9nyUkFTYdr38rrS4AhcQ7oA&s";
+                } else if (item.tipoMascota === "animal-7") {
+                    imagen.src = "https://static.maskokotas.com/blog/wp-content/uploads/2020/12/hare-4375952_1920-1.jpg";
+                } else if (item.tipoMascota === "animal-8") {
+                    imagen.src = "https://forticaps.com/wp-content/uploads/2020/04/11_caballos-de-pura-sangre.png";
+                } else if (item.tipoMascota === "animal-9") {
+                    imagen.src = "https://www.petalatino.com/wp-content/uploads/Goats-maximili.jpg";
+                } else if (item.tipoMascota === "animal-10") {
+                    imagen.src = "https://a.storyblok.com/f/160385/4bf112f0cd/datos_curiosos.jpg/m/?w=256&q=100";
+                }
+
+                // Síntomas
+                let divSintomas = document.createElement("div");
+                let parrafoSintomas = document.createElement("p");
+                parrafoSintomas.textContent = `Sintomas: ${item.motivo}`;
+                divSintomas.appendChild(parrafoSintomas);
+                divCard.appendChild(divSintomas);
+
+                // Botones
+                let divBotones = document.createElement("div");
+                divBotones.className = "divBotones";
+                let botonEditar = document.createElement("button");
+                botonEditar.className = "botonEditar";
+                botonEditar.textContent = "Editar 🖊";
+
+                let botonEliminar = document.createElement("button");
+                botonEliminar.className = "botonEliminar";
+                botonEliminar.textContent = "Eliminar ❌";
+
+                botonEditar.addEventListener("click", () => {
+                    document.getElementById('miModal').classList.add('active');
+                    document.getElementById('mainContent').classList.add('blur-effect');
+                    document.querySelector('header').classList.add('blur-effect');
+                    document.querySelector('footer').classList.add('blur-effect');
+                    
+                    document.getElementById('nombreMascota').value = item.nombreMascota;
+                    document.getElementById('nombrePropietario').value = item.nombrePropietario;
+                    document.getElementById('numeroPropietario').value = item.numeroPropietario;
+                    document.getElementById('fechaCita').value = item.fechaCita;
+                    document.getElementById('horaCita').value = item.horaCita;
+                    document.getElementById('Mascotas').value = item.tipoMascota;
+                    document.getElementById('motivo').value = item.motivo;
+
+                    document.getElementById('registrar').querySelector('h4').textContent = "Actualizar Mascota";
+                    modo = 1;
+                    idMascota = item.id;
+                });
+
+            botonEliminar.addEventListener("click", () => {
+    mostrarConfirmacion("¿Estás seguro de que deseas anular esta cita?", () => {
+        // En lugar de eliminar, cambiar el estado a "anulada"
+        const index = datosveterinaria.findIndex(mascota => mascota.id === item.id);
+        if(index !== -1) {
+            datosveterinaria[index].estado = "anulada";
+            mostrarAlerta("Cita anulada", "La cita ha sido anulada correctamente.");
+            pintarMascotas();
+        }
+    });
+});
+
+                divBotones.appendChild(botonEditar);
+                divBotones.appendChild(botonEliminar);
+                divCard.appendChild(divBotones);
+
+                document.getElementById('animales').appendChild(divCard);
+            });
+        }
+
+        /*   script de las alertas */
+        function mostrarAlerta(titulo, mensaje) {
+            const dialogo = document.getElementById('ventanaAlerta');
+            document.getElementById('tituloAlerta').textContent = titulo;
+            document.getElementById('mensajeAlerta').textContent = mensaje;
+            dialogo.showModal();
+        }
+
+        function mostrarConfirmacion(mensaje, alConfirmar) {
+            const dialogo = document.getElementById('ventanaConfirmar');
+            document.getElementById('mensajeConfirmar').textContent = mensaje;
+
+            const btnConfirmar = document.getElementById('btnConfirmar');
+            btnConfirmar.onclick = () => {
+                alConfirmar();
+                cerrarDialogo('ventanaConfirmar');
+            };
+
+            dialogo.showModal();
+        }
+        function cerrarDialogo(idDialogo) {
+            document.getElementById(idDialogo).close();
+        }
+
+        function abrirModal() {
+            document.getElementById('miModal').classList.add('active');
+            document.getElementById('mainContent').classList.add('blur-effect');
+            document.querySelector('header').classList.add('blur-effect');
+            document.querySelector('footer').classList.add('blur-effect');
+        }
+
+        function cerrarModal() {
+            document.getElementById('miModal').classList.remove('active');
+            document.getElementById('mainContent').classList.remove('blur-effect');
+            document.querySelector('header').classList.remove('blur-effect');
+            document.querySelector('footer').classList.remove('blur-effect');
+        }
+         function registrarMascota() {
+            if (modo === 0) {
+                guardarMascota();
+            } else if (modo === 1){
+                editarMascota();
+                // Modo edición
+                // let mascota = {
+                //     id: contadorId++,
+                //     nombreMascota: document.getElementById('nombreMascota').value,
+                //     nombrePropietario: document.getElementById('nombrePropietario').value,
+                //     numeroPropietario: document.getElementById('numeroPropietario').value,
+                //     fechaCita: document.getElementById('fechaCita').value,
+                //     horaCita: document.getElementById('horaCita').value,
+                //     tipoMascota: document.getElementById('Mascotas').value,
+                //     motivo: document.getElementById('motivo').value
+                // }
+                // datosveterinaria.unshift(mascota);
+                
+                // cerrarModal();
+                // mostrarAlerta("Mascota actualizada", "La mascota ha sido actualizada correctamente.");
+                // limpiar();
+                // pintarMascotas();
+                // modo = 0; // Volver al modo normal
+                // document.getElementById('registrar').querySelector('h4').textContent = "Registrar Mascota";
+            }
+        }
+        function guardarMascota() {
+            if (document.getElementById('nombreMascota').value == "") {
+                mostrarAlerta("Error", "por favor digite el nombre de la mascota");
+            } else if (document.getElementById('nombrePropietario').value == "") {
+                mostrarAlerta("Error", "por favor digite el nombre del propietario");
+            } else if (document.getElementById('numeroPropietario').value == "") {
+                mostrarAlerta("Error", "por favor digite el numero del propietario");
+            } else if (document.getElementById('fechaCita').value == "") {
+                mostrarAlerta("Error", "por favor digite la fecha de la cita");
+            }else if (new Date(document.getElementById("fechaCita").value) < new Date().setHours(0, 0, 0, 0)) {
+            mostrarAlerta("Error", "La fecha de la cita no puede ser anterior a la fecha actual.");
+
+            }else if (document.getElementById('horaCita').value == "") {
+                mostrarAlerta("Error", "por favor digite la hora de la cita");
+             
+            } else if (document.getElementById('horaCita').value < "08:00" || document.getElementById('horaCita').value > "20:00") {
+                mostrarAlerta("Error", "La hora de la cita debe estar entre las 08:00 y las 20:00");
+            }else if (document.getElementById('Mascotas').value == "") {
+                mostrarAlerta("Error", "por favor seleccione el tipo de mascota");
+            } else if (document.getElementById('motivo').value == "") {
+                mostrarAlerta("Error", "por favor digite el motivo");
+            } else {
+                let mascota = {
+                    id: contadorId++,
+                    nombreMascota: document.getElementById('nombreMascota').value,
+                    nombrePropietario: document.getElementById('nombrePropietario').value,
+                    numeroPropietario: document.getElementById('numeroPropietario').value,
+                    fechaCita: document.getElementById('fechaCita').value,
+                    horaCita: document.getElementById('horaCita').value,
+                    tipoMascota: document.getElementById('Mascotas').value,
+                    motivo: document.getElementById('motivo').value,
+                    estado:  "abierta"
+                }
+                datosveterinaria.unshift(mascota);
+                
+                // Quitar el blur y cerrar el modal
+                document.getElementById('miModal').classList.remove('active');
+                document.getElementById('mainContent').classList.remove('blur-effect');
+                document.querySelector('header').classList.remove('blur-effect');
+                document.querySelector('footer').classList.remove('blur-effect');
+                
+                mostrarAlerta("Éxito", "La mascota ha sido registrada correctamente.");
+                limpiar();
+                pintarMascotas();
+            }
+        }
+
+        function limpiar() {
+            document.getElementById('nombreMascota').value = ""
+            document.getElementById('nombrePropietario').value = ""
+            document.getElementById('numeroPropietario').value = ""
+            document.getElementById('fechaCita').value = ""
+            document.getElementById('horaCita').value = ""
+            document.getElementById('Mascotas').value = ""
+            document.getElementById('motivo').value = ""
+        }
+        function editarMascota() {
+            let idEncontrado = datosveterinaria.findIndex(item => item.id === idMascota);
+            if (document.getElementById('nombreMascota').value == "") {
+                mostrarAlerta("Error", "por favor digite el nombre de la mascota");
+            } else if (document.getElementById('nombrePropietario').value == "") {
+                mostrarAlerta("Error", "por favor digite el nombre del propietario");
+            } else if (document.getElementById('numeroPropietario').value == "") {
+                mostrarAlerta("Error", "por favor digite el numero del propietario");
+            } else if (document.getElementById('fechaCita').value == "") {
+                mostrarAlerta("Error", "por favor digite la fecha de la cita");
+            } else if (document.getElementById('horaCita').value == "") {
+                mostrarAlerta("Error", "por favor digite la hora de la cita");
+            } else if (document.getElementById('horaCita').value < "08:00" || document.getElementById('horaCita').value > "20:00") {
+                mostrarAlerta("Error", "La hora de la cita debe estar entre las 08:00 y las 20:00");
+            }else if (document.getElementById('Mascotas').value == "") {
+                mostrarAlerta("Error", "por favor seleccione el tipo de mascota");
+            } else if (document.getElementById('motivo').value == "") {
+                mostrarAlerta("Error", "por favor digite el motivo");
+            } else {
+                // Datos actualzados en el array
+                datosveterinaria[idEncontrado] = {
+                id: idMascota,
+                nombreMascota : document.getElementById('nombreMascota').value,
+                nombrePropietario : document.getElementById('nombrePropietario').value,
+                numeroPropietario : document.getElementById('numeroPropietario').value,
+                fechaCita : document.getElementById('fechaCita').value,
+                horaCita : document.getElementById('horaCita').value,
+                tipoMascota : document.getElementById('Mascotas').value,
+                motivo : document.getElementById('motivo').value
+            };
+            mostrarAlerta("Éxito", "La mascota ha sido actualizada correctamente.");
+            limpiar();
+            cerrarModal();
+            pintarMascotas();
+            modo = 0;
+            document.getElementById('registrar').querySelector('h4').textContent = "Registrar Mascota";
+            }
+        }
+       
+        function pintarMascotas() {
+            document.getElementById('animales').textContent = "";
+            datosveterinaria.forEach((item, i) => {
+                let divCard = document.createElement('div');
+                divCard.id = "divCard";
+                divCard.className = "divCard";
+
+                //estado de la cita
+                let divEstado=document.createElement('div');
+                divEstado.className = "estadoCita";
+
+                let selectEstado= document.createElement("select");
+                selectEstado.className="selectEstado";
+                selectEstado.innerHTML = `
+                    <option value="abierta" ${item.estado === "abierta" ? "selected" : ""}>Abierta</option>
+                    <option value="terminada" ${item.estado === "terminada" ? "selected" : ""}>Terminada</option>
+                    <option value="anulada" ${item.estado === "anulada" ? "selected" : ""}>Anulada</option>
+                `;
+
+                selectEstado.addEventListener("change",(e)=>{
+                    const nuevoEstado = e.target.value;
+                    const index =datosveterinaria.findIndex(mascota=>{
+                        if(index!==-1){
+                            datosveterinaria[index].estado=nuevoEstado;
+                            mostrarAlerta("Estado actualizado", `El estado de la cita ha sido cambiado a ${nuevoEstado}.`);
+                        }
+                    })
+                })
+                divEstado.appendChild(selectEstado);
+                divCard.appendChild(divEstado);
+
+
+                // Crear contenedor de imagen
+                let divImagen = document.createElement('div');
+                let imagen = document.createElement('img');
+                imagen.className = "imagenCard";
+
+                // Nombre de la mascota
+                let divNombreMascota = document.createElement('div');
+                let textoMascota = document.createElement('h3');
+                textoMascota.textContent = `Mascota: ${item.nombreMascota}`;
+                divNombreMascota.appendChild(textoMascota);
+                divCard.appendChild(divNombreMascota);
+
+                // ID de la cita
+                let idCita = document.createElement('div');
+                let textoId = document.createElement('h3');
+                textoId.textContent = `ID Cita: ${item.id}`;
+                textoId.style.textAlign = "center";
+                idCita.appendChild(textoId);
+                divCard.appendChild(idCita);
+
+                // Agregar imagen
+                divImagen.appendChild(imagen);
+                divCard.appendChild(divImagen);
+
+                // Información del propietario
+                let propietario = document.createElement('div');
+                let parrafoPropietario = document.createElement('p');
+                parrafoPropietario.textContent = `Propietario: ${item.nombrePropietario}`;
+                propietario.appendChild(parrafoPropietario);
+                divCard.appendChild(propietario);
+
+                // Teléfono
+                let telefono = document.createElement('div');
+                let parrafoTelefono = document.createElement('p');
+                parrafoTelefono.textContent = `Telefono: ${item.numeroPropietario}`;
+                telefono.appendChild(parrafoTelefono);
+                divCard.appendChild(telefono);
+
+                // Fecha
+                let fecha = document.createElement('div');
+                let parrafoFecha = document.createElement('p');
+                parrafoFecha.textContent = `Fecha de la cita: ${item.fechaCita}`;
+                fecha.appendChild(parrafoFecha);
+                divCard.appendChild(fecha);
+
+                // Hora
+                let hora = document.createElement('div');
+                let parrafoHora = document.createElement('p');
+                parrafoHora.textContent = `Hora de la cita: ${item.horaCita}`;
+                hora.appendChild(parrafoHora);
+                divCard.appendChild(hora);
+
+                // Tipo de mascota
+                let tipoMascota = document.createElement('div');
+                let parrafoTipo = document.createElement('p');
+                parrafoTipo.textContent = `Tipo de mascota: ${item.tipoMascota}`;
+                tipoMascota.appendChild(parrafoTipo);
+                divCard.appendChild(tipoMascota);
+
+                // Asignar imagen según tipo de mascota
+                if (item.tipoMascota === "animal-1") {
+                    imagen.src = "https://static.nationalgeographic.es/files/styles/image_3200/public/75552.ngsversion.1422285553360.webp?w=1600&h=1067";
+                } else if (item.tipoMascota === "animal-2") {
+                    imagen.src = "https://pampermut.com/blog/wp-content/uploads/2020/05/Como-es-el-caracter-de-tu-perro-segun-su-horoscopo-scaled.jpg";
+                } else if (item.tipoMascota === "animal-3") {
+                    imagen.src = "https://humanidades.com/wp-content/uploads/2017/03/serpiente-azul-1-e1564541782147.jpg";
+                } else if (item.tipoMascota === "animal-4") {
+                    imagen.src = "https://img.freepik.com/foto-gratis/primer-plano-guacamaya-roja-vista-lateral-closeup-cabeza-guacamaya-roja_488145-3540.jpg?semt=ais_hybrid&w=740";
+                } else if (item.tipoMascota === "animal-5") {
+                    imagen.src = "https://sciencemediacentre.es/sites/default/files/2022-05/Un-farmaco-ya-en-uso-en-humanos-corrige-la-obesidad-en-ratones-sin-efectos-secundarios.png";
+                } else if (item.tipoMascota === "animal-6") {
+                    imagen.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJLK8AkFvHjoY9nyUkFTYdr38rrS4AhcQ7oA&s";
+                } else if (item.tipoMascota === "animal-7") {
+                    imagen.src = "https://static.maskokotas.com/blog/wp-content/uploads/2020/12/hare-4375952_1920-1.jpg";
+                } else if (item.tipoMascota === "animal-8") {
+                    imagen.src = "https://forticaps.com/wp-content/uploads/2020/04/11_caballos-de-pura-sangre.png";
+                } else if (item.tipoMascota === "animal-9") {
+                    imagen.src = "https://www.petalatino.com/wp-content/uploads/Goats-maximili.jpg";
+                } else if (item.nombreMascota === "animal-10") {
+                    imagen.src = "https://a.storyblok.com/f/160385/4bf112f0cd/datos_curiosos.jpg/m/?w=256&q=100";
+                }
+                let divSintomas = document.createElement("div");
+                let parrafoSintomas = document.createElement("p");
+                parrafoSintomas.textContent = `Sintomas: ${item.motivo}`
+                divSintomas.appendChild(parrafoSintomas)
+                divCard.appendChild(divSintomas)
+
+                let divBotones = document.createElement("div");
+                divBotones.className = "divBotones";
+                let botonEditar = document.createElement("button");
+                botonEditar.className = "botonEditar"
+                botonEditar.textContent = "Editar 🖊"
+
+                let botonEliminar = document.createElement("button")
+                botonEliminar.className = "botonEliminar"
+                botonEliminar.textContent = "Eliminar ❌"
+
+                botonEditar.addEventListener("click", () => {
+                    document.getElementById('miModal').classList.add('active'); 
+                    document.getElementById('mainContent').classList.add('blur-effect');
+                    document.querySelector('header').classList.add('blur-effect');
+                    document.querySelector('footer').classList.add('blur-effect');
+                    
+                    document.getElementById('nombreMascota').value = item.nombreMascota;
+                    document.getElementById('nombrePropietario').value = item.nombrePropietario;
+                    document.getElementById('numeroPropietario').value = item.numeroPropietario;
+                    document.getElementById('fechaCita').value = item.fechaCita;
+                    document.getElementById('horaCita').value = item.horaCita;
+                    document.getElementById('Mascotas').value = item.tipoMascota;
+                    document.getElementById('motivo').value = item.motivo;
+
+                    document.getElementById('registrar').querySelector('h4').textContent = "Actualizar Mascota";
+                    modo = 1; // Modo edición
+                    idMascota = item.id;
+                });
+
+                botonEliminar.addEventListener("click", () => {
+                    mostrarConfirmacion("¿Estás seguro de que deseas eliminar esta mascota?", () => {
+                        datosveterinaria.splice(i, 1);
+                        pintarMascotas();
+                        mostrarAlerta("Mascota eliminada", "La mascota ha sido eliminada correctamente.");
+                    });
+                });
+
+                divBotones.appendChild(botonEditar);
+                divBotones.appendChild(botonEliminar);
+                divCard.appendChild(divBotones);
+
+                document.getElementById('animales').appendChild(divCard);
+            });
+        }
+       /*  window.addEventListener('load',inicializarbuscador); */
+    </script>
+</body>
+
+</html>
