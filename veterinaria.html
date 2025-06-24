@@ -114,7 +114,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 1000;
+            z-index: 1;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             padding: 20px;
@@ -125,9 +125,26 @@
         }
 
         #miModal.active {
-            display: grid;
+           display: grid;
+           width: 70%;
            background-color: rgba(191, 161, 246, 0.8);
+           width: 50%
         }
+        #miModal input{
+            padding: 7px;
+            border: 1px solid #9fe9ee;
+            border-radius: 5px;
+            width: 100%;
+        }
+        .titulo-modal {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: normal;
+}
 
         #miModal textarea {
             grid-column: span 2;
@@ -416,6 +433,12 @@
         width: 25px;
         height: 25px;
     }
+
+    .titulo-modal {
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+        padding-top: 5px;
+    }
 }
 
  @media(max-width:480px) {
@@ -496,6 +519,12 @@
         padding: 8px 15px;
         font-size: 14px;
     }
+
+    .titulo-modal {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        padding-top: 8px;
+    }
 }
   @media (min-width: 601px) and (max-width: 1024px){
     header h1 {
@@ -530,6 +559,43 @@
         height: 160px;
     }   
   }
+
+  /* Agregar dentro de la sección de estilos */
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 5px;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    cursor: pointer;
+    font-size: 25px;
+    color: #ddd;
+}
+
+.rating label:before {
+    content: '★';
+}
+
+.rating input:checked ~ label {
+    color: #ffd700;
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #ffd700;
+}
+
+.calificacion {
+    margin-top: 10px;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+}
     </style>
 </head>
 
@@ -563,6 +629,7 @@
     </div>
 
     <div id="miModal" class="formulario">
+        <h2 class="titulo-modal">Agendar cita</h2>
         <input type="text" id="nombreMascota" placeholder="Nombre de la Mascota">
         <input type="text" id="nombrePropietario" placeholder="Nombre del Propietario">
         <input type="number" id="numeroPropietario" placeholder="Telefono">
@@ -839,10 +906,13 @@ document.getElementById('botones').addEventListener('change', function(e) {
         }
 
         function abrirModal() {
+            limpiar(); // Limpia los campos antes de mostrar el modal
             document.getElementById('miModal').classList.add('active');
             document.getElementById('mainContent').classList.add('blur-effect');
             document.querySelector('header').classList.add('blur-effect');
             document.querySelector('footer').classList.add('blur-effect');
+            modo = 0; // Asegura que esté en modo registro
+            document.getElementById('registrar').querySelector('h4').textContent = "Registrar Mascota 🦝";
         }
 
         function cerrarModal() {
@@ -908,7 +978,8 @@ document.getElementById('botones').addEventListener('change', function(e) {
                     horaCita: document.getElementById('horaCita').value,
                     tipoMascota: document.getElementById('Mascotas').value,
                     motivo: document.getElementById('motivo').value,
-                    estado:  "abierta"
+                    estado: "abierta",
+                    calificacion: 0
                 }
                 datosveterinaria.unshift(mascota);
                 
@@ -991,14 +1062,24 @@ document.getElementById('botones').addEventListener('change', function(e) {
                     <option value="anulada" ${item.estado === "anulada" ? "selected" : ""}>Anulada</option>
                 `;
 
-                selectEstado.addEventListener("change",(e)=>{
+                selectEstado.addEventListener("change", (e) => {
                     const nuevoEstado = e.target.value;
-                    const index =datosveterinaria.findIndex(mascota=>{
-                        if(index!==-1){
-                            datosveterinaria[index].estado=nuevoEstado;
-                            mostrarAlerta("Estado actualizado", `El estado de la cita ha sido cambiado a ${nuevoEstado}.`);
+                    const index = datosveterinaria.findIndex(mascota => mascota.id === item.id);
+                    if (index !== -1) {
+                        datosveterinaria[index].estado = nuevoEstado;
+                        mostrarAlerta("Estado actualizado", `El estado de la cita ha sido cambiado a ${nuevoEstado}.`);
+                        
+                        // Obtener el estado seleccionado en el filtro principal
+                        const filtroEstado = document.getElementById('botones').value;
+                        
+                        // Si el filtro principal no está en "todas", actualizar la vista según el filtro
+                        if (filtroEstado !== 'todas') {
+                            const citasFiltradas = datosveterinaria.filter(cita => cita.estado === filtroEstado);
+                            pintarMascotasfiltradas(citasFiltradas);
+                        } else {
+                            pintarMascotas(); // Si está en "todas", mostrar todas las citas
                         }
-                    })
+                    }
                 })
                 divEstado.appendChild(selectEstado);
                 divCard.appendChild(divEstado);
@@ -1090,6 +1171,52 @@ document.getElementById('botones').addEventListener('change', function(e) {
                 parrafoSintomas.textContent = `Sintomas: ${item.motivo}`
                 divSintomas.appendChild(parrafoSintomas)
                 divCard.appendChild(divSintomas)
+
+                // Agregar después del divSintomas en pintarMascotas() y pintarMascotasFiltradas()
+                if(item.estado === "terminada") {
+                    let divCalificacion = document.createElement("div");
+                    divCalificacion.className = "calificacion";
+                    
+                    if(item.calificacion > 0) {
+                        // Si ya tiene calificación, mostrar estrellas fijas
+                        let estrellas = "★".repeat(item.calificacion) + "☆".repeat(5 - item.calificacion);
+                        divCalificacion.innerHTML = `
+                            <h3>Calificación del servicio</h3>
+                            <div class="rating-display">${estrellas}</div>
+                        `;
+                    } else {
+                        // Si no tiene calificación, mostrar sistema de votación
+                        divCalificacion.innerHTML = `
+                            <h3>Califica nuestro servicio</h3>
+                            <div class="rating">
+                                <input type="radio" name="rating-${item.id}" value="5" id="star5-${item.id}">
+                                <label for="star5-${item.id}"></label>
+                                <input type="radio" name="rating-${item.id}" value="4" id="star4-${item.id}">
+                                <label for="star4-${item.id}"></label>
+                                <input type="radio" name="rating-${item.id}" value="3" id="star3-${item.id}">
+                                <label for="star3-${item.id}"></label>
+                                <input type="radio" name="rating-${item.id}" value="2" id="star2-${item.id}">
+                                <label for="star2-${item.id}"></label>
+                                <input type="radio" name="rating-${item.id}" value="1" id="star1-${item.id}">
+                                <label for="star1-${item.id}"></label>
+                            </div>
+                        `;
+
+                        // Agregar evento para guardar la calificación
+                        divCalificacion.querySelectorAll('input[type="radio"]').forEach(radio => {
+                            radio.addEventListener('change', (e) => {
+                                const calificacion = parseInt(e.target.value);
+                                const index = datosveterinaria.findIndex(mascota => mascota.id === item.id);
+                                if(index !== -1) {
+                                    datosveterinaria[index].calificacion = calificacion;
+                                    mostrarAlerta("¡Gracias!", "Tu calificación ha sido registrada.");
+                                    pintarMascotas();
+                                }
+                            });
+                        });
+                    }
+                    divCard.appendChild(divCalificacion);
+                }
 
                 let divBotones = document.createElement("div");
                 divBotones.className = "divBotones";
